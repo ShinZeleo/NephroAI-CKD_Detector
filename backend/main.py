@@ -1,7 +1,9 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from ml_utils import predict_ckd
+import pandas as pd
+import io
 
 app = FastAPI(title="CKD Detection API", version="1.0")
 
@@ -77,6 +79,70 @@ def predict(patient: PatientData):
         
         result = predict_ckd(patient_dict)
         return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/predict_batch")
+async def predict_batch(file: UploadFile = File(...)):
+    try:
+        if not file.filename.endswith('.csv'):
+            raise HTTPException(status_code=400, detail="Only CSV files are supported")
+            
+        contents = await file.read()
+        df = pd.read_csv(io.StringIO(contents.decode('utf-8')))
+        
+        results = []
+        for index, row in df.iterrows():
+            # Convert row to dictionary format expected by predict_ckd
+            patient_dict = {
+                'Age': row.get('Age'),
+                'Blood Pressure': row.get('Blood Pressure'),
+                'Specific Gravity': row.get('Specific Gravity'),
+                'Albumin': row.get('Albumin'),
+                'Sugar': row.get('Sugar'),
+                'Red Blood Cells': row.get('Red Blood Cells'),
+                'Pus Cell': row.get('Pus Cell'),
+                'Pus Cell clumps': row.get('Pus Cell clumps'),
+                'Bacteria': row.get('Bacteria'),
+                'Blood Glucose Random': row.get('Blood Glucose Random'),
+                'Blood Urea': row.get('Blood Urea'),
+                'Serum Creatinine': row.get('Serum Creatinine'),
+                'Sodium': row.get('Sodium'),
+                'Potassium': row.get('Potassium'),
+                'Hemoglobin': row.get('Hemoglobin'),
+                'Packed Cell Volume': row.get('Packed Cell Volume'),
+                'White Blood Cell Count': row.get('White Blood Cell Count'),
+                'Red Blood Cell Count': row.get('Red Blood Cell Count'),
+                'Hypertension': row.get('Hypertension'),
+                'Diabetes Mellitus': row.get('Diabetes Mellitus'),
+                'Coronary Artery Disease': row.get('Coronary Artery Disease'),
+                'Appetite': row.get('Appetite'),
+                'Pedal Edema': row.get('Pedal Edema'),
+                'Anemia': row.get('Anemia')
+            }
+            
+            # Predict
+            pred = predict_ckd(patient_dict)
+            
+            results.append({
+                "id": str(row.get('id', index + 1)),
+                "prediction": pred['prediction'],
+                "probability": pred['probability'],
+                "is_ckd": pred['is_ckd'],
+                "risk": "High Risk" if pred['is_ckd'] else "Low Risk"
+            })
+            
+        summary = {
+            "total": len(results),
+            "high_risk": sum(1 for r in results if r["is_ckd"]),
+            "low_risk": sum(1 for r in results if not r["is_ckd"])
+        }
+            
+        return {
+            "summary": summary,
+            "data": results
+        }
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

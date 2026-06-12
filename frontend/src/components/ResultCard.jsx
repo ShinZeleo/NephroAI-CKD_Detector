@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import html2pdf from 'html2pdf.js';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const ResultCard = ({ result, formData }) => {
+  const { t } = useTranslation();
+  const reportRef = useRef();
+
   if (!result) return null;
 
   const isCKD = result.is_ckd;
@@ -8,6 +14,18 @@ const ResultCard = ({ result, formData }) => {
   const colorClass = isCKD ? 'text-red-500' : 'text-green-500';
   const bgClass = isCKD ? 'bg-red-50' : 'bg-green-50';
   const strokeColor = isCKD ? '#dc2626' : '#0d9488'; // Red-600 vs Teal-600
+
+  const handleDownloadPdf = () => {
+    const element = reportRef.current;
+    const opt = {
+      margin:       0.5,
+      filename:     `NephroAI_Report_${Math.floor(Math.random() * 90000) + 10000}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true },
+      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  };
 
   // SVG Gauge Calculations
   const radius = 60;
@@ -26,12 +44,13 @@ const ResultCard = ({ result, formData }) => {
   }
 
   return (
-    <div className={`mt-0 bg-white border border-gray-200 clinical-shadow p-6 md:p-8 ${isCKD ? 'border-t-4 border-t-red-600' : 'border-t-4 border-t-teal-600'}`}>
-      
-      <div className="border-b border-gray-100 pb-4 mb-6 flex justify-between items-center">
-        <h2 className="font-serif font-bold text-lg text-primary tracking-wide uppercase">Clinical Report</h2>
-        <span className="text-xs text-gray-400 font-mono">ID: #{Math.floor(Math.random() * 90000) + 10000}</span>
-      </div>
+    <div className="flex flex-col gap-4">
+      <div ref={reportRef} className={`mt-0 bg-white border border-gray-200 clinical-shadow p-6 md:p-8 ${isCKD ? 'border-t-4 border-t-red-600' : 'border-t-4 border-t-teal-600'}`}>
+        
+        <div className="border-b border-gray-100 pb-4 mb-6 flex justify-between items-center">
+          <h2 className="font-serif font-bold text-lg text-primary tracking-wide uppercase">Clinical Report</h2>
+          <span className="text-xs text-gray-400 font-mono">ID: #{Math.floor(Math.random() * 90000) + 10000}</span>
+        </div>
 
       <div className="flex flex-col items-center text-center w-full mb-8">
         <div className="relative w-40 h-40 mb-6">
@@ -86,8 +105,35 @@ const ResultCard = ({ result, formData }) => {
             </div>
           </div>
         )}
+        {result.shap_values && result.shap_values.length > 0 && (
+          <div className="border border-gray-100 p-5 rounded-md mt-6">
+            <h3 className="text-xs font-bold text-gray-700 mb-4 uppercase tracking-wider">{t('risk_factors')} (AI Analysis)</h3>
+            <div className="h-48 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={result.shap_values} layout="vertical" margin={{ top: 0, right: 0, left: 30, bottom: 0 }}>
+                  <XAxis type="number" hide />
+                  <YAxis dataKey="feature" type="category" tick={{ fontSize: 10, fill: '#6b7280' }} axisLine={false} tickLine={false} />
+                  <Tooltip formatter={(val) => val.toFixed(3)} labelStyle={{ color: '#1f2937', fontWeight: 'bold' }} />
+                  <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                    {result.shap_values.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.value > 0 ? '#ef4444' : '#10b981'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <p className="text-[10px] text-gray-400 mt-2 text-center">Merah: Meningkatkan Risiko CKD | Hijau: Menurunkan Risiko CKD</p>
+          </div>
+        )}
       </div>
-      
+      </div>
+      <button 
+        onClick={handleDownloadPdf}
+        className="w-full bg-stone-100 hover:bg-stone-200 text-gray-700 font-bold py-3 px-4 rounded-md transition-colors border border-stone-200 flex items-center justify-center space-x-2"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+        <span>{t('btn_download_pdf')}</span>
+      </button>
     </div>
   );
 };

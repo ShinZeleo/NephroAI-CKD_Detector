@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ResultCard from '../components/ResultCard';
 
 const PredictionForm = () => {
+  const { t } = useTranslation();
+
   const [formData, setFormData] = useState({
     Age: "",
     Blood_Pressure: "",
@@ -150,7 +153,7 @@ const PredictionForm = () => {
     <div className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="mb-10 mt-6 max-w-2xl">
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-3">
-          Clinical Prediction Form
+          {t('form_title')}
         </h1>
         <p className="text-gray-500 text-sm leading-relaxed">
           Sistem inferensi berbasis Random Forest untuk deteksi dini Chronic Kidney Disease. Atur parameter klinis pasien pada form di bawah ini.
@@ -217,12 +220,12 @@ const PredictionForm = () => {
               <div className="mt-10 pt-6 flex justify-end">
                 {Object.values(formData).every(val => val !== "") ? (
                   <button type="submit" disabled={loading} className="w-full md:w-auto bg-primary text-white font-semibold py-3 px-8 rounded-md transition-colors hover:bg-slate-800 disabled:opacity-50 flex justify-center items-center">
-                    {loading ? 'Menganalisis Data...' : 'Mulai Prediksi'}
+                    {loading ? t('btn_analyzing') : t('btn_predict')}
                   </button>
                 ) : (
                   <div className="w-full bg-stone-50 border border-gray-200 rounded-md p-4 text-center">
                     <p className="text-sm text-gray-500 font-medium flex items-center justify-center">
-                      <span className="text-yellow-500 mr-2">⚠️</span> Silakan lengkapi semua form untuk memunculkan tombol prediksi.
+                      <span className="text-yellow-500 mr-2">⚠️</span> {t('alert_incomplete')}
                     </p>
                   </div>
                 )}
@@ -245,8 +248,8 @@ const PredictionForm = () => {
               <div className="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
               </div>
-              <h3 className="text-gray-800 font-serif font-bold mb-1">Menunggu Input</h3>
-              <p className="text-sm text-gray-500">Isi parameter klinis di samping lalu tekan Mulai Prediksi.</p>
+              <h3 className="text-gray-800 font-serif font-bold mb-1">{t('form_waiting')}</h3>
+              <p className="text-sm text-gray-500">{t('form_waiting_desc')}</p>
             </div>
           )}
 

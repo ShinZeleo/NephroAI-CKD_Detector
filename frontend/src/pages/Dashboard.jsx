@@ -1,129 +1,166 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Upload, FileType, AlertCircle, CheckCircle, Activity, Users } from 'lucide-react';
 
 const Dashboard = () => {
+  const { t } = useTranslation();
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState(null);
+  const [error, setError] = useState(null);
+
+  const handleFileChange = (e) => {
+    const selected = e.target.files[0];
+    if (selected && selected.type === 'text/csv') {
+      setFile(selected);
+      setError(null);
+    } else {
+      setFile(null);
+      setError('Harap unggah file dengan format .csv');
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!file) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/predict_batch`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Terjadi kesalahan saat memproses file di server.');
+      }
+
+      const data = await response.json();
+      setResults(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-10 max-w-7xl mx-auto">
       <div className="mb-12">
         <h1 className="text-4xl font-serif font-bold text-primary mb-3">
-          CKD Global Analytics
+          {t('batch_title')}
         </h1>
         <p className="text-gray-500 text-sm max-w-2xl">
-          Tinjauan epidemiologi global mengenai tingkat prevalensi, mortalitas, dan distribusi etiologi Penyakit Ginjal Kronis berdasarkan sumber jurnal nefrologi.
+          Unggah dataset rekam medis pasien dalam format CSV untuk memprediksi risiko penyakit ginjal kronis (CKD) secara massal.
         </p>
       </div>
 
-      {/* Top Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-        <div className="bg-white border-l-4 border-primary p-6 shadow-sm">
-          <h3 className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-2">Prevalensi Global</h3>
-          <p className="text-3xl font-serif font-black text-gray-900">~10%</p>
-          <p className="text-xs text-gray-500 mt-2 leading-relaxed">Estimasi persentase populasi dunia terdiagnosis CKD stadium 1-5.</p>
-        </div>
-        
-        <div className="bg-white border-l-4 border-red-600 p-6 shadow-sm">
-          <h3 className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-2">Angka Kematian</h3>
-          <p className="text-3xl font-serif font-black text-red-600">Top 12</p>
-          <p className="text-xs text-gray-500 mt-2 leading-relaxed">Penyebab mortalitas tertinggi menurut data WHO terkini.</p>
-        </div>
-
-        <div className="bg-white border-l-4 border-teal-600 p-6 shadow-sm">
-          <h3 className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-2">Pasien Dialisis</h3>
-          <p className="text-3xl font-serif font-black text-teal-600">2.6 Jt+</p>
-          <p className="text-xs text-gray-500 mt-2 leading-relaxed">Pasien ESRD bergantung pada terapi pengganti ginjal.</p>
-        </div>
-
-        <div className="bg-white border-l-4 border-orange-400 p-6 shadow-sm">
-          <h3 className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-2">Gejala Awal</h3>
-          <p className="text-2xl font-serif font-black text-orange-500">Asimtomatik</p>
-          <p className="text-xs text-gray-500 mt-2 leading-relaxed">Stadium awal berjalan tanpa manifestasi klinis yang jelas.</p>
-        </div>
-      </div>
-
-      {/* Main Content Area */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* Left Column (Span 2) */}
-        <div className="lg:col-span-2">
-          <div className="bg-white p-8 border border-gray-200">
-            <h2 className="text-xl font-serif font-bold text-gray-900 mb-8 border-b border-gray-100 pb-4">Etiologi Utama (Penyebab CKD)</h2>
+        {/* Upload Section */}
+        <div className="lg:col-span-1">
+          <div className="bg-white p-8 border border-gray-200 clinical-shadow h-full flex flex-col">
+            <h2 className="text-lg font-bold text-gray-800 mb-6 uppercase tracking-wider text-center">{t('batch_upload')}</h2>
             
-            {/* Fake Bar Chart */}
-            <div className="space-y-8">
-              <div>
-                <div className="flex justify-between text-xs font-bold uppercase tracking-wide mb-2 text-gray-800">
-                  <span>Nefropati Diabetik</span>
-                  <span>30 - 50%</span>
-                </div>
-                <div className="w-full bg-stone-100 h-2">
-                  <div className="bg-primary h-2 w-[45%]"></div>
-                </div>
-              </div>
+            <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 bg-stone-50 hover:bg-stone-100 transition-colors relative cursor-pointer">
+              <input 
+                type="file" 
+                accept=".csv" 
+                onChange={handleFileChange} 
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              />
+              <FileType className="w-12 h-12 text-primary mb-4" />
+              <p className="text-sm font-bold text-gray-700 text-center mb-1">Pilih atau Tarik file CSV</p>
+              <p className="text-xs text-gray-400 text-center">Pastikan format kolom sesuai dengan template standar NephroAI.</p>
               
-              <div>
-                <div className="flex justify-between text-xs font-bold uppercase tracking-wide mb-2 text-gray-800">
-                  <span>Nefrosklerosis Hipertensif</span>
-                  <span>25 - 30%</span>
+              {file && (
+                <div className="mt-6 w-full p-3 bg-teal-50 border border-teal-200 rounded flex items-center justify-between">
+                  <span className="text-xs font-bold text-teal-800 truncate pr-2">{file.name}</span>
+                  <CheckCircle className="w-4 h-4 text-teal-600 flex-shrink-0" />
                 </div>
-                <div className="w-full bg-stone-100 h-2">
-                  <div className="bg-primary h-2 w-[28%] opacity-80"></div>
-                </div>
+              )}
+            </div>
+
+            {error && (
+              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-600 flex items-start">
+                <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />
+                <span>{error}</span>
               </div>
+            )}
+
+            <button 
+              onClick={handleUpload}
+              disabled={!file || loading}
+              className="mt-6 w-full bg-primary hover:bg-slate-800 text-white font-bold py-3 px-4 rounded transition-colors disabled:opacity-50 flex justify-center items-center"
+            >
+              {loading ? (
+                <><Activity className="w-4 h-4 mr-2 animate-spin" /> Memproses...</>
+              ) : 'Mulai Analisis Massal'}
+            </button>
+          </div>
+        </div>
+
+        {/* Results Section */}
+        <div className="lg:col-span-2">
+          {results ? (
+            <div className="bg-white p-8 border border-gray-200 clinical-shadow">
+              <h2 className="text-lg font-bold text-gray-800 mb-6 uppercase tracking-wider">{t('batch_summary')}</h2>
               
-              <div>
-                <div className="flex justify-between text-xs font-bold uppercase tracking-wide mb-2 text-gray-800">
-                  <span>Glomerulonefritis Kronis</span>
-                  <span>10 - 15%</span>
+              <div className="grid grid-cols-3 gap-4 mb-8">
+                <div className="p-4 bg-stone-50 border border-stone-100 rounded-md text-center">
+                  <Users className="w-6 h-6 text-gray-400 mx-auto mb-2" />
+                  <p className="text-3xl font-serif font-black text-gray-800">{results.summary.total}</p>
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Total Pasien</p>
                 </div>
-                <div className="w-full bg-stone-100 h-2">
-                  <div className="bg-primary h-2 w-[15%] opacity-60"></div>
+                <div className="p-4 bg-red-50 border border-red-100 rounded-md text-center">
+                  <Activity className="w-6 h-6 text-red-400 mx-auto mb-2" />
+                  <p className="text-3xl font-serif font-black text-red-600">{results.summary.high_risk}</p>
+                  <p className="text-[10px] font-bold text-red-600 uppercase tracking-widest mt-1">Risiko Tinggi</p>
+                </div>
+                <div className="p-4 bg-green-50 border border-green-100 rounded-md text-center">
+                  <CheckCircle className="w-6 h-6 text-green-500 mx-auto mb-2" />
+                  <p className="text-3xl font-serif font-black text-green-600">{results.summary.low_risk}</p>
+                  <p className="text-[10px] font-bold text-green-600 uppercase tracking-widest mt-1">Risiko Rendah</p>
                 </div>
               </div>
 
-              <div>
-                <div className="flex justify-between text-xs font-bold uppercase tracking-wide mb-2 text-gray-800">
-                  <span>Etiologi Lain (Genetik, Toksik)</span>
-                  <span>10 - 20%</span>
-                </div>
-                <div className="w-full bg-stone-100 h-2">
-                  <div className="bg-primary h-2 w-[12%] opacity-40"></div>
-                </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-stone-50 border-y border-stone-200">
+                    <tr>
+                      <th className="px-4 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider">ID Pasien</th>
+                      <th className="px-4 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider">Probabilitas</th>
+                      <th className="px-4 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider">Status Risiko</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {results.data.map((row, idx) => (
+                      <tr key={idx} className="hover:bg-stone-50 transition-colors">
+                        <td className="px-4 py-3 font-mono text-gray-600">#{row.id}</td>
+                        <td className="px-4 py-3 font-bold text-gray-800">{(row.probability * 100).toFixed(1)}%</td>
+                        <td className="px-4 py-3">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${row.is_ckd ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                            {row.risk}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="h-full bg-stone-50 border border-gray-200 rounded-lg flex flex-col items-center justify-center p-12 text-center text-gray-400">
+              <Activity className="w-16 h-16 mb-4 text-stone-300" />
+              <h3 className="text-lg font-serif font-bold text-gray-500 mb-2">Belum Ada Data</h3>
+              <p className="text-sm">Unggah file CSV di samping untuk melihat hasil analisis di sini.</p>
+            </div>
+          )}
         </div>
-
-        {/* Right Column */}
-        <div className="space-y-8">
-          <div className="bg-stone-50 p-8 border border-stone-200">
-            <h2 className="text-xl font-serif font-bold text-gray-900 mb-6">Stadium CKD Berdasarkan eGFR</h2>
-            <ul className="space-y-0 text-sm">
-              <li className="flex justify-between items-center py-3 border-b border-stone-200">
-                <span className="font-semibold text-gray-700">Stadium 1 (G1)</span>
-                <span className="text-xs font-mono bg-white border border-stone-300 px-2 py-1">&gt; 90</span>
-              </li>
-              <li className="flex justify-between items-center py-3 border-b border-stone-200">
-                <span className="font-semibold text-gray-700">Stadium 2 (G2)</span>
-                <span className="text-xs font-mono bg-white border border-stone-300 px-2 py-1">60 - 89</span>
-              </li>
-              <li className="flex justify-between items-center py-3 border-b border-stone-200">
-                <span className="font-semibold text-gray-700">Stadium 3 (G3a/b)</span>
-                <span className="text-xs font-mono bg-white border border-stone-300 px-2 py-1">30 - 59</span>
-              </li>
-              <li className="flex justify-between items-center py-3 border-b border-stone-200">
-                <span className="font-semibold text-gray-700">Stadium 4 (G4)</span>
-                <span className="text-xs font-mono bg-white border border-stone-300 px-2 py-1">15 - 29</span>
-              </li>
-              <li className="flex justify-between items-center py-3">
-                <span className="font-bold text-red-700">Stadium 5 (ESRD)</span>
-                <span className="text-xs font-mono font-bold bg-red-100 text-red-800 border border-red-200 px-2 py-1">&lt; 15</span>
-              </li>
-            </ul>
-            <p className="text-[10px] text-gray-400 mt-6 leading-tight">
-              *eGFR (Estimated Glomerular Filtration Rate) diukur dalam mL/min/1.73m². Klasifikasi berdasarkan pedoman KDIGO.
-            </p>
-          </div>
-        </div>
-
       </div>
     </div>
   );

@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
+import warnings
+import shap
 
 # Base paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -135,9 +137,41 @@ def predict_ckd(patient_data: dict):
     threshold = 0.3
     prediction = 1 if prob >= threshold else 0
     
+    # 5. Explain with SHAP
+    shap_data = []
+    try:
+        # Extract the actual estimator from the pipeline (assuming it's a Pipeline and the last step is the model)
+        estimator = model_pipeline.steps[-1][1] if hasattr(model_pipeline, 'steps') else model_pipeline
+        explainer = shap.TreeExplainer(estimator)
+        
+        # Calculate SHAP values for the single instance
+        # shap_values returns a list of arrays for classification (one for each class). We want class 1 (CKD)
+        shap_vals = explainer.shap_values(df_controlled)
+        if isinstance(shap_vals, list):
+            sv = shap_vals[1][0]  # Class 1, first instance
+        else:
+            sv = shap_vals[0] # Some versions return single array for binary
+        
+        # Map to feature names
+        features = df_controlled.columns.tolist()
+        for i, f_name in enumerate(features):
+            if abs(sv[i]) > 0.001:  # Filter out near-zero noise
+                shap_data.append({
+                    "feature": f_name,
+                    "value": float(sv[i])
+                })
+        # Sort by absolute impact
+        shap_data.sort(key=lambda x: abs(x['value']), reverse=True)
+        # Take top 10 most impactful features
+        shap_data = shap_data[:10]
+    except Exception as e:
+        print(f"SHAP explanation failed: {e}")
+        shap_data = []
+    
     return {
         "prediction": prediction,
         "probability": float(prob),
         "threshold_used": threshold,
-        "is_ckd": bool(prediction == 1)
+        "is_ckd": bool(prediction == 1),
+        "shap_values": shap_data
     }
