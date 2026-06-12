@@ -3,30 +3,30 @@ import ResultCard from '../components/ResultCard';
 
 const PredictionForm = () => {
   const [formData, setFormData] = useState({
-    Age: 50.0,
-    Blood_Pressure: 80.0,
-    Specific_Gravity: "1.020",
-    Albumin: "0.0",
-    Sugar: "0.0",
-    Red_Blood_Cells: "normal",
-    Pus_Cell: "normal",
-    Pus_Cell_clumps: "notpresent",
-    Bacteria: "notpresent",
-    Blood_Glucose_Random: 110.0,
-    Blood_Urea: 20.0,
-    Serum_Creatinine: 1.0,
-    Sodium: 140.0,
-    Potassium: 4.5,
-    Hemoglobin: 15.0,
-    Packed_Cell_Volume: 45.0,
-    White_Blood_Cell_Count: 8000.0,
-    Red_Blood_Cell_Count: 5.0,
-    Hypertension: "no",
-    Diabetes_Mellitus: "no",
-    Coronary_Artery_Disease: "no",
-    Appetite: "good",
-    Pedal_Edema: "no",
-    Anemia: "no"
+    Age: "",
+    Blood_Pressure: "",
+    Specific_Gravity: "",
+    Albumin: "",
+    Sugar: "",
+    Red_Blood_Cells: "",
+    Pus_Cell: "",
+    Pus_Cell_clumps: "",
+    Bacteria: "",
+    Blood_Glucose_Random: "",
+    Blood_Urea: "",
+    Serum_Creatinine: "",
+    Sodium: "",
+    Potassium: "",
+    Hemoglobin: "",
+    Packed_Cell_Volume: "",
+    White_Blood_Cell_Count: "",
+    Red_Blood_Cell_Count: "",
+    Hypertension: "",
+    Diabetes_Mellitus: "",
+    Coronary_Artery_Disease: "",
+    Appetite: "",
+    Pedal_Edema: "",
+    Anemia: ""
   })
 
   const [loading, setLoading] = useState(false)
@@ -60,7 +60,8 @@ const PredictionForm = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/predict', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/predict`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,10 +86,23 @@ const PredictionForm = () => {
     <div className="space-y-3 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow">
       <div className="flex justify-between items-center border-b border-gray-50 pb-2">
         <label className="text-sm font-bold text-gray-800">{label}</label>
-        <span className="font-bold text-primary text-lg">{formData[name]} <span className="text-xs text-gray-500 font-normal">{unit}</span></span>
+        <div className="flex items-center space-x-2">
+          <input 
+            type="number" 
+            name={name}
+            min={min}
+            max={max}
+            step={step}
+            value={formData[name]}
+            onChange={handleChange}
+            placeholder="-"
+            className="w-20 text-right font-bold text-primary text-lg border border-gray-200 rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary bg-stone-50"
+          />
+          <span className="text-xs text-gray-500 font-normal">{unit}</span>
+        </div>
       </div>
       <div className="pt-2">
-        <input type="range" min={min} max={max} step={step} name={name} value={formData[name]} onChange={handleChange} className="w-full" />
+        <input type="range" min={min} max={max} step={step} name={name} value={formData[name] === "" ? min : formData[name]} onChange={handleChange} className="w-full" />
       </div>
       <div className="flex justify-between text-xs text-gray-400 font-medium">
         <span>{min} {unit}</span>
@@ -201,9 +215,17 @@ const PredictionForm = () => {
               </div>
 
               <div className="mt-10 pt-6 flex justify-end">
-                <button type="submit" disabled={loading} className="w-full md:w-auto bg-primary text-white font-semibold py-3 px-8 rounded-md transition-colors hover:bg-slate-800 disabled:opacity-50 flex justify-center items-center">
-                  {loading ? 'Menganalisis Data...' : 'Mulai Prediksi'}
-                </button>
+                {Object.values(formData).every(val => val !== "") ? (
+                  <button type="submit" disabled={loading} className="w-full md:w-auto bg-primary text-white font-semibold py-3 px-8 rounded-md transition-colors hover:bg-slate-800 disabled:opacity-50 flex justify-center items-center">
+                    {loading ? 'Menganalisis Data...' : 'Mulai Prediksi'}
+                  </button>
+                ) : (
+                  <div className="w-full bg-stone-50 border border-gray-200 rounded-md p-4 text-center">
+                    <p className="text-sm text-gray-500 font-medium flex items-center justify-center">
+                      <span className="text-yellow-500 mr-2">⚠️</span> Silakan lengkapi semua form untuk memunculkan tombol prediksi.
+                    </p>
+                  </div>
+                )}
               </div>
             </form>
           </div>
