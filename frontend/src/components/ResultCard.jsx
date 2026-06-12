@@ -78,15 +78,15 @@ const ResultCard = ({ result, formData }) => {
           <ul className="space-y-3 text-sm text-gray-600 leading-relaxed">
             {isCKD ? (
               <>
-                <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> Rujuk ke dokter spesialis Nefrologi segera.</li>
-                <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> Lakukan tes lab lengkap (Ureum, Kreatinin, Urinalisis).</li>
-                <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> Pantau ketat tekanan darah harian pasien.</li>
+                <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_1', 'Rujuk ke Dokter Spesialis Penyakit Dalam Konsultan Ginjal Hipertensi (Sp.PD-KGH) segera.')}</li>
+                <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_2', 'Lakukan tes lab lengkap (Ureum, Kreatinin, Urinalisis).')}</li>
+                <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_3', 'Pantau ketat tekanan darah harian pasien.')}</li>
               </>
             ) : (
               <>
-                <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> Pertahankan diet seimbang dan gaya hidup aktif.</li>
-                <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> Minum air putih yang cukup setiap hari.</li>
-                <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> Lakukan general check-up tahunan secara rutin.</li>
+                <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_1', 'Pertahankan diet seimbang dan gaya hidup aktif.')}</li>
+                <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_2', 'Minum air putih yang cukup setiap hari.')}</li>
+                <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_3', 'Lakukan general check-up tahunan secara rutin.')}</li>
               </>
             )}
           </ul>
