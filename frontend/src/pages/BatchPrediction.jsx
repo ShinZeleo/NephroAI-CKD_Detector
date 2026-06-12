@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Upload, FileType, AlertCircle, CheckCircle, Activity, Users } from 'lucide-react';
+import { Upload, FileType, AlertCircle, CheckCircle, Activity, Users, Download } from 'lucide-react';
 
 const BatchPrediction = () => {
   const { t } = useTranslation();
@@ -18,6 +18,20 @@ const BatchPrediction = () => {
       setFile(null);
       setError(t('batch_error_format'));
     }
+  };
+
+  const downloadTemplate = () => {
+    const headers = "Age,Blood_Pressure,Specific_Gravity,Albumin,Sugar,Red_Blood_Cells,Pus_Cell,Pus_Cell_clumps,Bacteria,Blood_Glucose_Random,Blood_Urea,Serum_Creatinine,Sodium,Potassium,Hemoglobin,Packed_Cell_Volume,White_Blood_Cell_Count,Red_Blood_Cell_Count,Hypertension,Diabetes_Mellitus,Coronary_Artery_Disease,Appetite,Pedal_Edema,Anemia\n";
+    const sampleRow = "48,80,1.020,1,0,normal,normal,notpresent,notpresent,121,36,1.2,135,4.5,15.4,44,7800,5.2,yes,yes,no,good,no,no\n";
+    const blob = new Blob([headers + sampleRow], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('hidden', '');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'nephroai_batch_template.csv');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   const handleUpload = async () => {
@@ -77,6 +91,15 @@ const BatchPrediction = () => {
               <p className="text-sm font-bold text-gray-700 text-center mb-1">{t('batch_drag_drop')}</p>
               <p className="text-xs text-gray-400 text-center">{t('batch_format_note')}</p>
               
+              <button 
+                type="button" 
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); downloadTemplate(); }}
+                className="mt-3 inline-flex items-center text-xs font-bold text-primary hover:text-slate-800 transition-colors z-10 relative"
+              >
+                <Download className="w-3 h-3 mr-1" />
+                {t('batch_download_template')}
+              </button>
+
               {file && (
                 <div className="mt-6 w-full p-3 bg-teal-50 border border-teal-200 rounded flex items-center justify-between">
                   <span className="text-xs font-bold text-teal-800 truncate pr-2">{file.name}</span>
