@@ -3,43 +3,46 @@
 ![NephroAI Banner](https://img.shields.io/badge/NephroAI-Clinical_Intelligence-0d9488?style=for-the-badge)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![LightGBM](https://img.shields.io/badge/LightGBM-F3702A?style=for-the-badge)
+![RandomForest](https://img.shields.io/badge/Random_Forest-0f172a?style=for-the-badge)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-**NephroAI** adalah sebuah sistem *Clinical Decision Support* (Sistem Pendukung Keputusan Klinis) berbasis *Machine Learning* terdepan yang dirancang untuk mendeteksi probabilitas Penyakit Ginjal Kronis (CKD) pada pasien. Aplikasi ini memadukan keandalan algoritma pohon gradien (LightGBM) dengan antarmuka web bergaya *Clinical Minimalist & Modern Editorial*.
+**NephroAI** adalah sebuah sistem *Clinical Decision Support* (Sistem Pendukung Keputusan Klinis) berbasis *Machine Learning* terdepan yang dirancang untuk mendeteksi dini probabilitas Penyakit Ginjal Kronis (CKD) pada pasien. Aplikasi ini memadukan keandalan algoritma Random Forest dengan antarmuka web bergaya *Clinical Minimalist & Modern Editorial*.
 
 ---
 
-## 🌟 Fitur Utama
+## 🌟 Fitur Utama (Advanced Edition)
 
-- **🤖 Deteksi Prediktif Akurat:** Ditenagai oleh model *Machine Learning* yang telah dioptimalkan (LightGBM / Random Forest / Logistic Regression) yang dilatih menggunakan dataset medis CKD berstandar internasional.
-- **🎨 Clinical Minimalist UI/UX:** Antarmuka pengguna (UI) yang dirancang khusus untuk memenuhi standar kebersihan visual alat medis. Tidak ada komponen bising; mengutamakan tipografi editorial (*serif* yang elegan) dan palet warna klinis (Teal & Stone).
-- **📊 Laporan Diagnostik Interaktif (Result Card):** Hasil prediksi tidak ditampilkan sekadar "Ya/Tidak", melainkan disajikan dalam bentuk Laporan Medis (*Clinical Report*) lengkap dengan indikator risiko berbasis Gauge SVG, penjelasan parameter medis, dan anjuran protokol selanjutnya.
-- **📚 Ensiklopedia Medis Terintegrasi:** Edukasi mendalam (berbasis pedoman KDIGO) yang menjelaskan patofisiologi penyakit, interpretasi parameter lab (Kreatinin, BUN, Urinalisis), serta protokol pencegahan dan penanganan.
-- **🧠 Analisis Model Transparan (XAI):** Pipeline ML didukung oleh SHAP (SHapley Additive exPlanations) untuk memberikan interpretasi *Feature Importance*, memastikan bahwa prediksi model dapat dijelaskan secara medis (*Explainable AI*).
+- **🤖 Deteksi Prediktif Akurat:** Ditenagai oleh model *Machine Learning* Random Forest (berdasarkan `ckd_final_v8`) yang tervalidasi menggunakan dataset rekam medis klinis.
+- **🌐 Sistem Multi-Bahasa (i18n):** Dukungan penuh penerjemahan antarmuka secara dinamis (**Bahasa Indonesia & Inggris**) tanpa memerlukan pemuatan ulang (*reload*) halaman.
+- **🧠 Analisis Transparan (Explainable AI / SHAP):** Visualisasi grafis kontribusi parameter medis menggunakan **SHAP (SHapley Additive exPlanations)**. Membantu dokter memahami *mengapa* pasien dikategorikan berisiko tinggi (Balok Merah: meningkatkan risiko | Balok Hijau: menurunkan risiko).
+- **📂 Analisis Massal (CSV Batch Prediction):** Fitur pengunggahan dataset pasien secara massal dalam format `.csv`. Dilengkapi dengan:
+  - Tombol **Unduh Template CSV** langsung di antarmuka web.
+  - Ringkasan metrik global pasien (Total Pasien, Total Risiko Tinggi/Rendah).
+  - Ikon **Drill-down Analisis SHAP** di setiap baris tabel untuk membedah profil risiko pasien secara individu secara instan.
+- **📄 Ekspor Laporan Klinis (PDF Report):** Fitur cetak laporan medis instan beresolusi tinggi menggunakan `html2pdf.js`, lengkap dengan seluruh grafik SHAP untuk arsip klinik atau dokter.
+- **⚡ Fitur "Isi Nilai Normal" (Clinical UX):** Mengisi ke-24 parameter klinis secara instan dengan baseline nilai normal sehat manusia, membantu mempercepat proses pengisian data rekam medis bagi praktisi kesehatan.
+- **📚 Pusat Edukasi Terpadu:** Edukasi patofisiologi penyakit ginjal berdasarkan pedoman klinis global (KDIGO) untuk mendukung edukasi mandiri pasien.
 
 ---
 
 ## 🏗️ Arsitektur Sistem
 
-Proyek ini dibangun menggunakan arsitektur *Decoupled* yang memisahkan *Frontend*, *Backend*, dan *Machine Learning Pipeline*:
+Proyek ini dibangun menggunakan arsitektur *Decoupled* (Terpisah):
 
-1. **Frontend (Web App):**
-   - **Framework:** React.js (Vite)
-   - **Styling:** Tailwind CSS (dengan utilitas khusus penyembunyian *scrollbar*, desain grid editorial, dan tata letak *mobile-responsive*)
-   - **Komponen Kunci:**
-     - `PredictionForm`: Sistem input terpadu dengan *Segmented Controls* dan *Sliders* untuk mengumpulkan data dasar, darah, dan urine pasien.
-     - `Dashboard`: Dasbor analitik global.
-     - `Education`: Literatur klinis.
+```mermaid
+graph TD
+    A[Pasien/Dokter] -->|Input Rekam Medis / CSV| B[React Frontend - Vite]
+    B -->|Request POST /predict| C[FastAPI Backend]
+    C -->|Prapemrosesan MICE Imputer| D[Pipeline Machine Learning]
+    D -->|Predict / SHAP Explainer| E[Random Forest Classifier]
+    E -->|Hasil & Nilai SHAP| C
+    C -->|JSON Response| B
+    B -->|Render UI / Unduh PDF| A
+```
 
-2. **Backend (API Layer):**
-   - **Framework:** FastAPI (Python)
-   - **Fungsi:** Mengambil *payload* data medis dari *frontend*, melakukan prapemrosesan (Imputasi MICE, *Scaling*), dan meneruskannya ke model *Machine Learning* termuat (*Pickle/Joblib*) untuk *inference*.
-
-3. **Machine Learning (Data Science Pipeline):**
-   - **Jupyter Notebooks / Streamlit:** Digunakan untuk *Exploratory Data Analysis* (EDA) fase 1 dan 2.
-   - **Preprocessing:** MICE Imputer untuk *missing values*, Robust/Standard Scaler.
-   - **Model Inti:** LightGBM sebagai *champion model* karena keunggulannya dalam menangani data tabular kompleks dengan *missing values*.
+1. **Frontend (Web App):** React.js (Vite) + Tailwind CSS + Lucide Icons + Recharts untuk grafik.
+2. **Backend (API Layer):** FastAPI (Python) + Uvicorn + Scikit-Learn + SHAP + Pandas.
+3. **Machine Learning Pipeline:** Imputasi MICE untuk penanganan *missing values*, Robust/Standard Scaler, dan model Random Forest Classifier.
 
 ---
 
@@ -90,25 +93,25 @@ npm install
 # Jalankan server pengembangan
 npm run dev
 ```
-Frontend akan berjalan secara lokal di `http://localhost:5173` (atau *port* yang tertera pada terminal).
+Frontend akan berjalan secara lokal di `http://localhost:5173`.
 
 ---
 
 ## 🩸 Parameter Klinis yang Dianalisis
 
-NephroAI mengonsumsi 24 paramater dari rekam medis pasien, terbagi dalam tiga domain utama:
+NephroAI mengonsumsi 24 paramater klinis dari rekam medis pasien:
 - **Data Dasar:** Usia, Tekanan Darah, Riwayat Hipertensi, Diabetes Melitus, Penyakit Jantung Koroner, Nafsu Makan, Edema, Anemia.
 - **Panel Darah:** Hemoglobin, Hematokrit (PCV), Leukosit, Eritrosit, Gula Darah Acak, Ureum (BUN), Kreatinin Serum, Natrium, Kalium.
 - **Urinalisis:** Berat Jenis (Specific Gravity), Albumin (Proteinuria), Gula Urine, Sel Darah Merah (RBC), Sel Nanah (Pus Cell), Bakteri.
 
 ---
 
-## 📜 Lisensi
+## 📜 Lisensi & Penafian Medis
 
-Proyek ini dibuat untuk keperluan akademis dan penelitian (Tugas Pengantar Data Mining). 
+Proyek ini dibuat untuk keperluan akademis dan penelitian (Tugas Pengantar Data Mining).
 
 > **Penafian Medis (Medical Disclaimer):**
-> Aplikasi *NephroAI* adalah *Proof of Concept* (PoC) berbasis kecerdasan buatan. Model ini TIDAK BOLEH digunakan sebagai substitusi absolut dari diagnosis klinis dokter spesialis (Nefrolog). Semua keputusan medis harus diverifikasi melalui laboratorium fisik yang tervalidasi.
+> Aplikasi *NephroAI* adalah *Proof of Concept* (PoC) berbasis kecerdasan buatan. Model ini TIDAK BOLEH digunakan sebagai substitusi absolut dari diagnosis klinis dokter. Seluruh indikasi keparahan medis wajib dirujuk dan diverifikasi langsung ke **Dokter Spesialis Penyakit Dalam Konsultan Ginjal Hipertensi (Sp.PD-KGH)** melalui pemeriksaan laboratorium fisik resmi.
 
 ---
 *Didesain dan dikembangkan dengan ❤️ oleh ShinZeleo*
