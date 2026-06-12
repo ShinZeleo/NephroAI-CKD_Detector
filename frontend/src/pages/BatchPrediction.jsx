@@ -124,6 +124,46 @@ const BatchPrediction = () => {
                 <><Activity className="w-4 h-4 mr-2 animate-spin" /> {t('batch_processing')}</>
               ) : t('batch_start_btn')}
             </button>
+
+            {/* CSV Info Card */}
+            <div className="mt-8 bg-stone-50 border border-stone-200 rounded-lg p-5 flex-shrink-0">
+              <h3 className="text-sm font-bold text-gray-800 mb-2 flex items-center">
+                <AlertCircle className="w-4 h-4 mr-2 text-primary" />
+                {t('batch_info_title')}
+              </h3>
+              <p className="text-xs text-gray-500 mb-3">{t('batch_info_desc')}</p>
+              
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-2 text-xs scrollbar-thin scrollbar-thumb-gray-300">
+                <div className="grid grid-cols-5 gap-2 border-b border-gray-100 pb-2">
+                  <span className="font-mono text-gray-700 col-span-3">Age, Blood_Pressure</span>
+                  <span className="text-gray-400 text-right col-span-2">{t('batch_info_num')}</span>
+                </div>
+                <div className="grid grid-cols-5 gap-2 border-b border-gray-100 pb-2">
+                  <span className="font-mono text-gray-700 col-span-3">Specific_Gravity, Albumin, Sugar</span>
+                  <span className="text-gray-400 text-right col-span-2">{t('batch_info_cat')}</span>
+                </div>
+                <div className="grid grid-cols-5 gap-2 border-b border-gray-100 pb-2">
+                  <span className="font-mono text-gray-700 col-span-3">Red_Blood_Cells, Pus_Cell</span>
+                  <span className="text-gray-400 text-right col-span-2">normal/abnormal</span>
+                </div>
+                <div className="grid grid-cols-5 gap-2 border-b border-gray-100 pb-2">
+                  <span className="font-mono text-gray-700 col-span-3">Pus_Cell_clumps, Bacteria</span>
+                  <span className="text-gray-400 text-right col-span-2">present/notpresent</span>
+                </div>
+                <div className="grid grid-cols-5 gap-2 border-b border-gray-100 pb-2">
+                  <span className="font-mono text-gray-700 col-span-3">Blood_Glucose_Random, Blood_Urea, Serum_Creatinine, Sodium, Potassium, Hemoglobin, Packed_Cell_Volume, White_Blood_Cell_Count, Red_Blood_Cell_Count</span>
+                  <span className="text-gray-400 text-right col-span-2">{t('batch_info_num')}</span>
+                </div>
+                <div className="grid grid-cols-5 gap-2 border-b border-gray-100 pb-2">
+                  <span className="font-mono text-gray-700 col-span-3">Hypertension, Diabetes_Mellitus, Coronary_Artery_Disease, Pedal_Edema, Anemia</span>
+                  <span className="text-gray-400 text-right col-span-2">{t('batch_info_bool')} (yes/no)</span>
+                </div>
+                <div className="grid grid-cols-5 gap-2 border-b border-gray-100 pb-2">
+                  <span className="font-mono text-gray-700 col-span-3">Appetite</span>
+                  <span className="text-gray-400 text-right col-span-2">good/poor</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
