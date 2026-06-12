@@ -129,7 +129,33 @@ async def predict_batch(file: UploadFile = File(...)):
                 "prediction": pred['prediction'],
                 "probability": pred['probability'],
                 "is_ckd": pred['is_ckd'],
-                "risk": "High Risk" if pred['is_ckd'] else "Low Risk"
+                "risk": "High Risk" if pred['is_ckd'] else "Low Risk",
+                "original_data": {
+                    "Age": row.get('Age'),
+                    "Blood_Pressure": row.get('Blood_Pressure'),
+                    "Specific_Gravity": row.get('Specific_Gravity'),
+                    "Albumin": row.get('Albumin'),
+                    "Sugar": row.get('Sugar'),
+                    "Red_Blood_Cells": row.get('Red_Blood_Cells'),
+                    "Pus_Cell": row.get('Pus_Cell'),
+                    "Pus_Cell_clumps": row.get('Pus_Cell_clumps'),
+                    "Bacteria": row.get('Bacteria'),
+                    "Blood_Glucose_Random": row.get('Blood_Glucose_Random'),
+                    "Blood_Urea": row.get('Blood_Urea'),
+                    "Serum_Creatinine": row.get('Serum_Creatinine'),
+                    "Sodium": row.get('Sodium'),
+                    "Potassium": row.get('Potassium'),
+                    "Hemoglobin": row.get('Hemoglobin'),
+                    "Packed_Cell_Volume": row.get('Packed_Cell_Volume'),
+                    "White_Blood_Cell_Count": row.get('White_Blood_Cell_Count'),
+                    "Red_Blood_Cell_Count": row.get('Red_Blood_Cell_Count'),
+                    "Hypertension": row.get('Hypertension'),
+                    "Diabetes_Mellitus": row.get('Diabetes_Mellitus'),
+                    "Coronary_Artery_Disease": row.get('Coronary_Artery_Disease'),
+                    "Appetite": row.get('Appetite'),
+                    "Pedal_Edema": row.get('Pedal_Edema'),
+                    "Anemia": row.get('Anemia')
+                }
             })
             
         summary = {

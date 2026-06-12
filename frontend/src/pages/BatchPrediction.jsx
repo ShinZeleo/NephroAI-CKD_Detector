@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Upload, FileType, AlertCircle, CheckCircle, Activity, Users, Download } from 'lucide-react';
+import { Upload, FileType, AlertCircle, CheckCircle, Activity, Users, Download, Search, X } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const BatchPrediction = () => {
   const { t } = useTranslation();
@@ -8,6 +9,11 @@ const BatchPrediction = () => {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
+  
+  // SHAP Modal State
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [shapData, setShapData] = useState(null);
+  const [loadingShap, setLoadingShap] = useState(false);
 
   const handleFileChange = (e) => {
     const selected = e.target.files[0];
@@ -57,9 +63,28 @@ const BatchPrediction = () => {
       const data = await response.json();
       setResults(data);
     } catch (err) {
-      setError(err.message);
+      setError(t('batch_error_process'));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAnalyze = async (row) => {
+    setSelectedRow(row);
+    setLoadingShap(true);
+    setShapData(null);
+    try {
+      const response = await fetch('http://localhost:8000/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(row.original_data),
+      });
+      const data = await response.json();
+      setShapData(data.shap_values);
+    } catch (err) {
+      console.error("Failed to fetch SHAP data", err);
+    } finally {
+      setLoadingShap(false);
     }
   };
 
@@ -218,6 +243,7 @@ const BatchPrediction = () => {
                       <th className="px-4 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider">{t('batch_col_id')}</th>
                       <th className="px-4 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider">{t('batch_col_prob')}</th>
                       <th className="px-4 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider">{t('batch_col_status')}</th>
+                      <th className="px-4 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider text-right">Aksi</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -229,6 +255,15 @@ const BatchPrediction = () => {
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${row.is_ckd ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
                             {row.is_ckd ? t('batch_high_risk') : t('batch_low_risk')}
                           </span>
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <button 
+                            onClick={() => handleAnalyze(row)}
+                            className="inline-flex items-center justify-center p-1.5 text-gray-400 hover:text-primary hover:bg-blue-50 rounded transition-colors"
+                            title="Analisis SHAP"
+                          >
+                            <Search className="w-4 h-4" />
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -245,6 +280,50 @@ const BatchPrediction = () => {
           )}
         </div>
       </div>
+
+      {/* SHAP Modal */}
+      {selectedRow && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-xl w-full max-w-2xl clinical-shadow overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-stone-50">
+              <div>
+                <h3 className="font-bold text-gray-800 text-lg">Analisis Pasien #{selectedRow.id}</h3>
+                <p className="text-xs text-gray-500">{(selectedRow.probability * 100).toFixed(1)}% • {selectedRow.is_ckd ? t('batch_high_risk') : t('batch_low_risk')}</p>
+              </div>
+              <button onClick={() => setSelectedRow(null)} className="p-2 text-gray-400 hover:text-gray-800 bg-white rounded-full border border-gray-200">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto flex-1">
+              {loadingShap ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Activity className="w-8 h-8 text-primary animate-spin mb-3" />
+                  <p className="text-sm font-bold text-gray-500">Menganalisis Faktor Risiko...</p>
+                </div>
+              ) : shapData ? (
+                <div>
+                  <h4 className="text-xs font-bold text-gray-700 mb-4 uppercase tracking-wider">{t('risk_factors')} (AI Analysis)</h4>
+                  <div className="h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={shapData} layout="vertical" margin={{ top: 0, right: 0, left: 30, bottom: 0 }}>
+                        <XAxis type="number" hide />
+                        <YAxis dataKey="feature" type="category" tick={{ fontSize: 10, fill: '#6b7280' }} axisLine={false} tickLine={false} />
+                        <Tooltip formatter={(val) => val.toFixed(3)} labelStyle={{ color: '#1f2937', fontWeight: 'bold' }} />
+                        <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                          {shapData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.value > 0 ? '#ef4444' : '#10b981'} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <p className="text-[10px] text-gray-400 mt-4 text-center">Merah: Meningkatkan Risiko CKD | Hijau: Menurunkan Risiko CKD</p>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
