@@ -116,10 +116,10 @@ const PredictionForm = () => {
 
   const formatLabel = (val) => {
     const map = {
-      "yes": "Ya", "no": "Tidak",
-      "good": "Baik", "poor": "Buruk",
-      "normal": "Normal", "abnormal": "Abnormal",
-      "present": "Ada", "notpresent": "Tidak Ada",
+      "yes": t("opt_yes"), "no": t("opt_no"),
+      "good": t("opt_good"), "poor": t("opt_poor"),
+      "normal": t("opt_normal"), "abnormal": t("opt_abnormal"),
+      "present": t("opt_present"), "notpresent": t("opt_notpresent"),
     };
     return map[val] || val;
   }
@@ -156,7 +156,7 @@ const PredictionForm = () => {
           {t('form_title')}
         </h1>
         <p className="text-gray-500 text-sm leading-relaxed">
-          Sistem inferensi berbasis Random Forest untuk deteksi dini Chronic Kidney Disease. Atur parameter klinis pasien pada form di bawah ini.
+          {t('form_desc') || "Sistem inferensi berbasis Random Forest untuk deteksi dini Chronic Kidney Disease. Atur parameter klinis pasien pada form di bawah ini."}
         </p>
       </div>
 
@@ -167,15 +167,15 @@ const PredictionForm = () => {
             
             <div className="flex space-x-6 border-b border-gray-200 mb-8 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               <button type="button" onClick={() => setActiveTab("basic")} className={`pb-4 font-semibold text-sm whitespace-nowrap transition-colors relative ${activeTab === "basic" ? "text-primary" : "text-gray-400 hover:text-gray-700"}`}>
-                Data Dasar
+                {t('tab_basic')}
                 {activeTab === "basic" && <div className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-primary"></div>}
               </button>
               <button type="button" onClick={() => setActiveTab("blood")} className={`pb-4 font-semibold text-sm whitespace-nowrap transition-colors relative ${activeTab === "blood" ? "text-primary" : "text-gray-400 hover:text-gray-700"}`}>
-                Panel Darah
+                {t('tab_blood')}
                 {activeTab === "blood" && <div className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-primary"></div>}
               </button>
               <button type="button" onClick={() => setActiveTab("urine")} className={`pb-4 font-semibold text-sm whitespace-nowrap transition-colors relative ${activeTab === "urine" ? "text-primary" : "text-gray-400 hover:text-gray-700"}`}>
-                Urinalisis
+                {t('tab_urine')}
                 {activeTab === "urine" && <div className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-primary"></div>}
               </button>
             </div>
@@ -183,37 +183,37 @@ const PredictionForm = () => {
             <form onSubmit={handleSubmit}>
               
               <div className={`grid grid-cols-1 md:grid-cols-2 gap-5 ${activeTab === "basic" ? "block" : "hidden"}`}>
-                {renderRangeInput("Age", "Umur", "1", "120", "1", "Thn")}
-                {renderRangeInput("Blood_Pressure", "Tekanan Darah", "40", "300", "1", "mmHg")}
-                {renderToggleInput("Hypertension", "Hipertensi", ["no", "yes"])}
-                {renderToggleInput("Diabetes_Mellitus", "Diabetes Melitus", ["no", "yes"])}
-                {renderToggleInput("Coronary_Artery_Disease", "Riwayat Jantung Koroner", ["no", "yes"])}
-                {renderToggleInput("Appetite", "Nafsu Makan", ["good", "poor"])}
-                {renderToggleInput("Pedal_Edema", "Edema (Bengkak Kaki)", ["no", "yes"])}
-                {renderToggleInput("Anemia", "Anemia", ["no", "yes"])}
+                {renderRangeInput("Age", t("lbl_age"), "1", "120", "1", "Thn")}
+                {renderRangeInput("Blood_Pressure", t("lbl_bp"), "40", "300", "1", "mmHg")}
+                {renderToggleInput("Hypertension", t("lbl_htn"), ["no", "yes"])}
+                {renderToggleInput("Diabetes_Mellitus", t("lbl_dm"), ["no", "yes"])}
+                {renderToggleInput("Coronary_Artery_Disease", t("lbl_cad"), ["no", "yes"])}
+                {renderToggleInput("Appetite", t("lbl_appetite"), ["good", "poor"])}
+                {renderToggleInput("Pedal_Edema", t("lbl_pe"), ["no", "yes"])}
+                {renderToggleInput("Anemia", t("lbl_ane"), ["no", "yes"])}
               </div>
 
               <div className={`grid grid-cols-1 md:grid-cols-2 gap-5 ${activeTab === "blood" ? "block" : "hidden"}`}>
-                {renderRangeInput("Hemoglobin", "Hemoglobin", "3.0", "20.0", "0.1", "g/dL")}
-                {renderRangeInput("Packed_Cell_Volume", "Hematokrit (PCV)", "10", "60", "1", "%")}
-                {renderRangeInput("White_Blood_Cell_Count", "Leukosit", "2000", "30000", "100", "sel/µL")}
-                {renderRangeInput("Red_Blood_Cell_Count", "Eritrosit", "2.0", "8.0", "0.1", "juta/µL")}
-                {renderRangeInput("Blood_Glucose_Random", "Gula Darah Acak", "50", "500", "1", "mg/dL")}
-                {renderRangeInput("Blood_Urea", "Ureum Darah (BUN)", "5", "300", "1", "mg/dL")}
-                {renderRangeInput("Serum_Creatinine", "Kreatinin Serum", "0.1", "30.0", "0.1", "mg/dL")}
-                {renderRangeInput("Sodium", "Natrium", "110", "160", "1", "mEq/L")}
-                {renderRangeInput("Potassium", "Kalium", "2.0", "8.0", "0.1", "mEq/L")}
+                {renderRangeInput("Hemoglobin", t("lbl_hemo"), "3.0", "20.0", "0.1", "g/dL")}
+                {renderRangeInput("Packed_Cell_Volume", t("lbl_pcv"), "10", "60", "1", "%")}
+                {renderRangeInput("White_Blood_Cell_Count", t("lbl_wbc"), "2000", "30000", "100", "sel/µL")}
+                {renderRangeInput("Red_Blood_Cell_Count", t("lbl_rbc"), "2.0", "8.0", "0.1", "juta/µL")}
+                {renderRangeInput("Blood_Glucose_Random", t("lbl_bgr"), "50", "500", "1", "mg/dL")}
+                {renderRangeInput("Blood_Urea", t("lbl_bu"), "5", "300", "1", "mg/dL")}
+                {renderRangeInput("Serum_Creatinine", t("lbl_sc"), "0.1", "30.0", "0.1", "mg/dL")}
+                {renderRangeInput("Sodium", t("lbl_sod"), "110", "160", "1", "mEq/L")}
+                {renderRangeInput("Potassium", t("lbl_pot"), "2.0", "8.0", "0.1", "mEq/L")}
               </div>
 
               <div className={`grid grid-cols-1 gap-5 ${activeTab === "urine" ? "block" : "hidden"}`}>
-                {renderToggleInput("Specific_Gravity", "Berat Jenis (SG)", ["1.005", "1.010", "1.015", "1.020", "1.025"])}
-                {renderToggleInput("Albumin", "Albumin (AL)", ["0.0", "1.0", "2.0", "3.0", "4.0", "5.0"])}
-                {renderToggleInput("Sugar", "Gula Urine (SU)", ["0.0", "1.0", "2.0", "3.0", "4.0", "5.0"])}
+                {renderToggleInput("Specific_Gravity", t("lbl_sg"), ["1.005", "1.010", "1.015", "1.020", "1.025"])}
+                {renderToggleInput("Albumin", t("lbl_al"), ["0.0", "1.0", "2.0", "3.0", "4.0", "5.0"])}
+                {renderToggleInput("Sugar", t("lbl_su"), ["0.0", "1.0", "2.0", "3.0", "4.0", "5.0"])}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {renderToggleInput("Red_Blood_Cells", "Sel Darah Merah", ["normal", "abnormal"])}
-                  {renderToggleInput("Pus_Cell", "Sel Nanah (Pus Cell)", ["normal", "abnormal"])}
-                  {renderToggleInput("Pus_Cell_clumps", "Gumpalan Sel Nanah", ["notpresent", "present"])}
-                  {renderToggleInput("Bacteria", "Bakteri", ["notpresent", "present"])}
+                  {renderToggleInput("Red_Blood_Cells", t("lbl_rbcc"), ["normal", "abnormal"])}
+                  {renderToggleInput("Pus_Cell", t("lbl_pc"), ["normal", "abnormal"])}
+                  {renderToggleInput("Pus_Cell_clumps", t("lbl_pcc"), ["notpresent", "present"])}
+                  {renderToggleInput("Bacteria", t("lbl_ba"), ["notpresent", "present"])}
                 </div>
               </div>
 
