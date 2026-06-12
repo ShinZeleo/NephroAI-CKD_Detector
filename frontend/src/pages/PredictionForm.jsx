@@ -45,6 +45,35 @@ const PredictionForm = () => {
     }))
   }
 
+  const handleFillNormal = () => {
+    setFormData({
+      Age: "35",
+      Blood_Pressure: "120",
+      Specific_Gravity: "1.020",
+      Albumin: "0.0",
+      Sugar: "0.0",
+      Red_Blood_Cells: "normal",
+      Pus_Cell: "normal",
+      Pus_Cell_clumps: "notpresent",
+      Bacteria: "notpresent",
+      Blood_Glucose_Random: "90",
+      Blood_Urea: "30",
+      Serum_Creatinine: "0.8",
+      Sodium: "140",
+      Potassium: "4.0",
+      Hemoglobin: "15.0",
+      Packed_Cell_Volume: "45",
+      White_Blood_Cell_Count: "7000",
+      Red_Blood_Cell_Count: "5.0",
+      Hypertension: "no",
+      Diabetes_Mellitus: "no",
+      Coronary_Artery_Disease: "no",
+      Appetite: "good",
+      Pedal_Edema: "no",
+      Anemia: "no"
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -217,14 +246,22 @@ const PredictionForm = () => {
                 </div>
               </div>
 
-              <div className="mt-10 pt-6 flex justify-end">
+              <div className="mt-10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                <button 
+                  type="button" 
+                  onClick={handleFillNormal}
+                  className="w-full md:w-auto bg-stone-100 text-gray-700 font-semibold py-3 px-6 rounded-md border border-stone-200 transition-colors hover:bg-stone-200 flex justify-center items-center"
+                >
+                  {t('btn_fill_normal')}
+                </button>
+                
                 {Object.values(formData).every(val => val !== "") ? (
                   <button type="submit" disabled={loading} className="w-full md:w-auto bg-primary text-white font-semibold py-3 px-8 rounded-md transition-colors hover:bg-slate-800 disabled:opacity-50 flex justify-center items-center">
                     {loading ? t('btn_analyzing') : t('btn_predict')}
                   </button>
                 ) : (
-                  <div className="w-full bg-stone-50 border border-gray-200 rounded-md p-4 text-center">
-                    <p className="text-sm text-gray-500 font-medium flex items-center justify-center">
+                  <div className="w-full md:w-auto flex-1 bg-stone-50 border border-gray-200 rounded-md p-3 text-center md:text-right">
+                    <p className="text-sm text-gray-500 font-medium inline-flex items-center">
                       <span className="text-yellow-500 mr-2">⚠️</span> {t('alert_incomplete')}
                     </p>
                   </div>
