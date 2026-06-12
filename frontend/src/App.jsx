@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Navbar from './components/Navbar'
 import PredictionForm from './pages/PredictionForm'
-import Dashboard from './pages/Dashboard'
+import BatchPrediction from './pages/BatchPrediction'
 import Education from './pages/Education'
 
 function App() {
@@ -12,8 +12,8 @@ function App() {
     switch (activePage) {
       case 'home':
         return <PredictionForm />
-      case 'dashboard':
-        return <Dashboard />
+      case 'batch':
+        return <BatchPrediction />
       case 'education':
         return <Education />
       default:

@@ -187,6 +187,81 @@ const Education = () => {
             </ul>
           </section>
 
+          {/* Chapter 6: Global Analytics (Merged from Dashboard) */}
+          <section className="pt-8 border-t border-gray-200">
+            <h2 className="text-3xl font-serif font-bold text-gray-900 mb-8 pb-2 border-b border-gray-100">
+              6. Analitik Epidemiologi Global
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <div className="bg-stone-50 border-l-4 border-primary p-6 shadow-sm">
+                <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-2">Prevalensi Global</h3>
+                <p className="text-3xl font-serif font-black text-gray-900">~10%</p>
+                <p className="text-xs text-gray-600 mt-2 leading-relaxed">Estimasi persentase populasi dunia terdiagnosis CKD stadium 1-5.</p>
+              </div>
+              
+              <div className="bg-stone-50 border-l-4 border-red-600 p-6 shadow-sm">
+                <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-2">Angka Kematian</h3>
+                <p className="text-3xl font-serif font-black text-red-600">Top 12</p>
+                <p className="text-xs text-gray-600 mt-2 leading-relaxed">Penyebab mortalitas tertinggi menurut data WHO terkini.</p>
+              </div>
+
+              <div className="bg-stone-50 border-l-4 border-teal-600 p-6 shadow-sm">
+                <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-2">Pasien Dialisis</h3>
+                <p className="text-3xl font-serif font-black text-teal-600">2.6 Jt+</p>
+                <p className="text-xs text-gray-600 mt-2 leading-relaxed">Pasien ESRD bergantung pada terapi pengganti ginjal.</p>
+              </div>
+
+              <div className="bg-stone-50 border-l-4 border-orange-400 p-6 shadow-sm">
+                <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-2">Gejala Awal</h3>
+                <p className="text-2xl font-serif font-black text-orange-500">Asimtomatik</p>
+                <p className="text-xs text-gray-600 mt-2 leading-relaxed">Stadium awal berjalan tanpa manifestasi klinis yang jelas.</p>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 border border-gray-200 clinical-shadow mt-8">
+              <h3 className="text-lg font-serif font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Distribusi Etiologi Utama</h3>
+              <div className="space-y-6">
+                <div>
+                  <div className="flex justify-between text-xs font-bold uppercase tracking-wide mb-2 text-gray-800">
+                    <span>Nefropati Diabetik</span>
+                    <span>30 - 50%</span>
+                  </div>
+                  <div className="w-full bg-stone-100 h-2 rounded-full overflow-hidden">
+                    <div className="bg-primary h-2 w-[45%]"></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs font-bold uppercase tracking-wide mb-2 text-gray-800">
+                    <span>Nefrosklerosis Hipertensif</span>
+                    <span>25 - 30%</span>
+                  </div>
+                  <div className="w-full bg-stone-100 h-2 rounded-full overflow-hidden">
+                    <div className="bg-teal-600 h-2 w-[28%]"></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs font-bold uppercase tracking-wide mb-2 text-gray-800">
+                    <span>Glomerulonefritis Kronis</span>
+                    <span>10 - 15%</span>
+                  </div>
+                  <div className="w-full bg-stone-100 h-2 rounded-full overflow-hidden">
+                    <div className="bg-orange-400 h-2 w-[15%]"></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs font-bold uppercase tracking-wide mb-2 text-gray-800">
+                    <span>Etiologi Lainnya</span>
+                    <span>10 - 20%</span>
+                  </div>
+                  <div className="w-full bg-stone-100 h-2 rounded-full overflow-hidden">
+                    <div className="bg-indigo-400 h-2 w-[12%]"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
         </div>
 
         {/* Right Column (Sidebar) */}

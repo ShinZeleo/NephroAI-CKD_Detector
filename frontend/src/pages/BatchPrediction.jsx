@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Upload, FileType, AlertCircle, CheckCircle, Activity, Users } from 'lucide-react';
 
-const Dashboard = () => {
+const BatchPrediction = () => {
   const { t } = useTranslation();
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -166,4 +166,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default BatchPrediction;

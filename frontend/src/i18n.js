@@ -6,7 +6,7 @@ const resources = {
   id: {
     translation: {
       "nav_predict": "Prediksi CKD",
-      "nav_dashboard": "Dashboard Data",
+      "nav_batch": "Prediksi Massal",
       "nav_education": "Pusat Edukasi",
       "form_title": "Formulir Prediksi Klinis",
       "form_waiting": "Menunggu Input",
@@ -28,7 +28,7 @@ const resources = {
   en: {
     translation: {
       "nav_predict": "CKD Prediction",
-      "nav_dashboard": "Data Dashboard",
+      "nav_batch": "Batch Prediction",
       "nav_education": "Education Center",
       "form_title": "Clinical Prediction Form",
       "form_waiting": "Waiting for Input",
