@@ -133,34 +133,54 @@ const BatchPrediction = () => {
               </h3>
               <p className="text-xs text-gray-500 mb-3">{t('batch_info_desc')}</p>
               
-              <div className="space-y-2 max-h-48 overflow-y-auto pr-2 text-xs scrollbar-thin scrollbar-thumb-gray-300">
-                <div className="grid grid-cols-5 gap-2 border-b border-gray-100 pb-2">
-                  <span className="font-mono text-gray-700 col-span-3">Age, Blood_Pressure</span>
-                  <span className="text-gray-400 text-right col-span-2">{t('batch_info_num')}</span>
+              <div className="space-y-4 text-xs mt-4">
+                <div>
+                  <p className="font-bold text-gray-700 mb-1.5">{t('batch_info_num')}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Age', 'Blood_Pressure', 'Blood_Glucose_Random', 'Blood_Urea', 'Serum_Creatinine', 'Sodium', 'Potassium', 'Hemoglobin', 'Packed_Cell_Volume', 'White_Blood_Cell_Count', 'Red_Blood_Cell_Count'].map(col => (
+                      <span key={col} className="px-2 py-0.5 bg-gray-200 text-gray-700 rounded-md font-mono">{col}</span>
+                    ))}
+                  </div>
                 </div>
-                <div className="grid grid-cols-5 gap-2 border-b border-gray-100 pb-2">
-                  <span className="font-mono text-gray-700 col-span-3">Specific_Gravity, Albumin, Sugar</span>
-                  <span className="text-gray-400 text-right col-span-2">{t('batch_info_cat')}</span>
+                <div>
+                  <p className="font-bold text-gray-700 mb-1.5">{t('batch_info_cat')}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Specific_Gravity', 'Albumin', 'Sugar'].map(col => (
+                      <span key={col} className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-md font-mono">{col}</span>
+                    ))}
+                  </div>
                 </div>
-                <div className="grid grid-cols-5 gap-2 border-b border-gray-100 pb-2">
-                  <span className="font-mono text-gray-700 col-span-3">Red_Blood_Cells, Pus_Cell</span>
-                  <span className="text-gray-400 text-right col-span-2">normal/abnormal</span>
+                <div>
+                  <p className="font-bold text-gray-700 mb-1.5">{t('batch_info_val_norm')}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Red_Blood_Cells', 'Pus_Cell'].map(col => (
+                      <span key={col} className="px-2 py-0.5 bg-purple-100 text-purple-800 rounded-md font-mono">{col}</span>
+                    ))}
+                  </div>
                 </div>
-                <div className="grid grid-cols-5 gap-2 border-b border-gray-100 pb-2">
-                  <span className="font-mono text-gray-700 col-span-3">Pus_Cell_clumps, Bacteria</span>
-                  <span className="text-gray-400 text-right col-span-2">present/notpresent</span>
+                <div>
+                  <p className="font-bold text-gray-700 mb-1.5">{t('batch_info_val_pres')}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Pus_Cell_clumps', 'Bacteria'].map(col => (
+                      <span key={col} className="px-2 py-0.5 bg-orange-100 text-orange-800 rounded-md font-mono">{col}</span>
+                    ))}
+                  </div>
                 </div>
-                <div className="grid grid-cols-5 gap-2 border-b border-gray-100 pb-2">
-                  <span className="font-mono text-gray-700 col-span-3">Blood_Glucose_Random, Blood_Urea, Serum_Creatinine, Sodium, Potassium, Hemoglobin, Packed_Cell_Volume, White_Blood_Cell_Count, Red_Blood_Cell_Count</span>
-                  <span className="text-gray-400 text-right col-span-2">{t('batch_info_num')}</span>
+                <div>
+                  <p className="font-bold text-gray-700 mb-1.5">{t('batch_info_bool')}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Hypertension', 'Diabetes_Mellitus', 'Coronary_Artery_Disease', 'Pedal_Edema', 'Anemia'].map(col => (
+                      <span key={col} className="px-2 py-0.5 bg-green-100 text-green-800 rounded-md font-mono">{col}</span>
+                    ))}
+                  </div>
                 </div>
-                <div className="grid grid-cols-5 gap-2 border-b border-gray-100 pb-2">
-                  <span className="font-mono text-gray-700 col-span-3">Hypertension, Diabetes_Mellitus, Coronary_Artery_Disease, Pedal_Edema, Anemia</span>
-                  <span className="text-gray-400 text-right col-span-2">{t('batch_info_bool')} (yes/no)</span>
-                </div>
-                <div className="grid grid-cols-5 gap-2 border-b border-gray-100 pb-2">
-                  <span className="font-mono text-gray-700 col-span-3">Appetite</span>
-                  <span className="text-gray-400 text-right col-span-2">good/poor</span>
+                <div>
+                  <p className="font-bold text-gray-700 mb-1.5">{t('batch_info_val_good')}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Appetite'].map(col => (
+                      <span key={col} className="px-2 py-0.5 bg-teal-100 text-teal-800 rounded-md font-mono">{col}</span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
