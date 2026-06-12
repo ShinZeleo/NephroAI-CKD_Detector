@@ -16,7 +16,7 @@ const BatchPrediction = () => {
       setError(null);
     } else {
       setFile(null);
-      setError('Harap unggah file dengan format .csv');
+      setError(t('batch_error_format'));
     }
   };
 
@@ -56,7 +56,7 @@ const BatchPrediction = () => {
           {t('batch_title')}
         </h1>
         <p className="text-gray-500 text-sm max-w-2xl">
-          Unggah dataset rekam medis pasien dalam format CSV untuk memprediksi risiko penyakit ginjal kronis (CKD) secara massal.
+          {t('batch_desc')}
         </p>
       </div>
 
@@ -74,8 +74,8 @@ const BatchPrediction = () => {
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
               <FileType className="w-12 h-12 text-primary mb-4" />
-              <p className="text-sm font-bold text-gray-700 text-center mb-1">Pilih atau Tarik file CSV</p>
-              <p className="text-xs text-gray-400 text-center">Pastikan format kolom sesuai dengan template standar NephroAI.</p>
+              <p className="text-sm font-bold text-gray-700 text-center mb-1">{t('batch_drag_drop')}</p>
+              <p className="text-xs text-gray-400 text-center">{t('batch_format_note')}</p>
               
               {file && (
                 <div className="mt-6 w-full p-3 bg-teal-50 border border-teal-200 rounded flex items-center justify-between">
@@ -98,8 +98,8 @@ const BatchPrediction = () => {
               className="mt-6 w-full bg-primary hover:bg-slate-800 text-white font-bold py-3 px-4 rounded transition-colors disabled:opacity-50 flex justify-center items-center"
             >
               {loading ? (
-                <><Activity className="w-4 h-4 mr-2 animate-spin" /> Memproses...</>
-              ) : 'Mulai Analisis Massal'}
+                <><Activity className="w-4 h-4 mr-2 animate-spin" /> {t('batch_processing')}</>
+              ) : t('batch_start_btn')}
             </button>
           </div>
         </div>
@@ -114,17 +114,17 @@ const BatchPrediction = () => {
                 <div className="p-4 bg-stone-50 border border-stone-100 rounded-md text-center">
                   <Users className="w-6 h-6 text-gray-400 mx-auto mb-2" />
                   <p className="text-3xl font-serif font-black text-gray-800">{results.summary.total}</p>
-                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Total Pasien</p>
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">{t('batch_total_patients')}</p>
                 </div>
                 <div className="p-4 bg-red-50 border border-red-100 rounded-md text-center">
                   <Activity className="w-6 h-6 text-red-400 mx-auto mb-2" />
                   <p className="text-3xl font-serif font-black text-red-600">{results.summary.high_risk}</p>
-                  <p className="text-[10px] font-bold text-red-600 uppercase tracking-widest mt-1">Risiko Tinggi</p>
+                  <p className="text-[10px] font-bold text-red-600 uppercase tracking-widest mt-1">{t('batch_high_risk')}</p>
                 </div>
                 <div className="p-4 bg-green-50 border border-green-100 rounded-md text-center">
                   <CheckCircle className="w-6 h-6 text-green-500 mx-auto mb-2" />
                   <p className="text-3xl font-serif font-black text-green-600">{results.summary.low_risk}</p>
-                  <p className="text-[10px] font-bold text-green-600 uppercase tracking-widest mt-1">Risiko Rendah</p>
+                  <p className="text-[10px] font-bold text-green-600 uppercase tracking-widest mt-1">{t('batch_low_risk')}</p>
                 </div>
               </div>
 
@@ -132,9 +132,9 @@ const BatchPrediction = () => {
                 <table className="w-full text-left text-sm">
                   <thead className="bg-stone-50 border-y border-stone-200">
                     <tr>
-                      <th className="px-4 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider">ID Pasien</th>
-                      <th className="px-4 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider">Probabilitas</th>
-                      <th className="px-4 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider">Status Risiko</th>
+                      <th className="px-4 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider">{t('batch_col_id')}</th>
+                      <th className="px-4 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider">{t('batch_col_prob')}</th>
+                      <th className="px-4 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider">{t('batch_col_status')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -144,7 +144,7 @@ const BatchPrediction = () => {
                         <td className="px-4 py-3 font-bold text-gray-800">{(row.probability * 100).toFixed(1)}%</td>
                         <td className="px-4 py-3">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${row.is_ckd ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
-                            {row.risk}
+                            {row.is_ckd ? t('batch_high_risk') : t('batch_low_risk')}
                           </span>
                         </td>
                       </tr>
@@ -156,8 +156,8 @@ const BatchPrediction = () => {
           ) : (
             <div className="h-full bg-stone-50 border border-gray-200 rounded-lg flex flex-col items-center justify-center p-12 text-center text-gray-400">
               <Activity className="w-16 h-16 mb-4 text-stone-300" />
-              <h3 className="text-lg font-serif font-bold text-gray-500 mb-2">Belum Ada Data</h3>
-              <p className="text-sm">Unggah file CSV di samping untuk melihat hasil analisis di sini.</p>
+              <h3 className="text-lg font-serif font-bold text-gray-500 mb-2">{t('batch_no_data')}</h3>
+              <p className="text-sm">{t('batch_no_data_desc')}</p>
             </div>
           )}
         </div>

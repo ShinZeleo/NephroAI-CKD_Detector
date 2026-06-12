@@ -21,8 +21,22 @@ const resources = {
       "btn_download_pdf": "Unduh Laporan (PDF)",
       "risk_factors": "Faktor Risiko Utama",
       "batch_title": "Prediksi Massal (CSV)",
+      "batch_desc": "Unggah dataset rekam medis pasien dalam format CSV untuk memprediksi risiko penyakit ginjal kronis (CKD) secara massal.",
       "batch_upload": "Unggah File CSV Pasien",
-      "batch_summary": "Ringkasan Prediksi Massal"
+      "batch_drag_drop": "Pilih atau Tarik file CSV",
+      "batch_format_note": "Pastikan format kolom sesuai dengan template standar NephroAI.",
+      "batch_error_format": "Harap unggah file dengan format .csv",
+      "batch_start_btn": "Mulai Analisis Massal",
+      "batch_processing": "Memproses...",
+      "batch_summary": "Ringkasan Prediksi Massal",
+      "batch_total_patients": "Total Pasien",
+      "batch_high_risk": "Risiko Tinggi",
+      "batch_low_risk": "Risiko Rendah",
+      "batch_col_id": "ID Pasien",
+      "batch_col_prob": "Probabilitas",
+      "batch_col_status": "Status Risiko",
+      "batch_no_data": "Belum Ada Data",
+      "batch_no_data_desc": "Unggah file CSV di samping untuk melihat hasil analisis di sini."
     }
   },
   en: {
@@ -43,8 +57,22 @@ const resources = {
       "btn_download_pdf": "Download Report (PDF)",
       "risk_factors": "Key Risk Factors",
       "batch_title": "Batch Prediction (CSV)",
+      "batch_desc": "Upload patient medical record datasets in CSV format to predict chronic kidney disease (CKD) risk in batches.",
       "batch_upload": "Upload Patient CSV File",
-      "batch_summary": "Batch Prediction Summary"
+      "batch_drag_drop": "Select or Drag CSV file",
+      "batch_format_note": "Ensure column formats match the NephroAI standard template.",
+      "batch_error_format": "Please upload a file in .csv format",
+      "batch_start_btn": "Start Batch Analysis",
+      "batch_processing": "Processing...",
+      "batch_summary": "Batch Prediction Summary",
+      "batch_total_patients": "Total Patients",
+      "batch_high_risk": "High Risk",
+      "batch_low_risk": "Low Risk",
+      "batch_col_id": "Patient ID",
+      "batch_col_prob": "Probability",
+      "batch_col_status": "Risk Status",
+      "batch_no_data": "No Data Yet",
+      "batch_no_data_desc": "Upload a CSV file on the side to see the analysis results here."
     }
   }
 };
