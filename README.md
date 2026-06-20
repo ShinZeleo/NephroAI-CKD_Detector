@@ -21,11 +21,14 @@ Aplikasi ini telah di-*deploy* dan dapat dicoba secara langsung tanpa perlu mela
 
 ## 📸 Antarmuka Aplikasi (Screenshots)
 
-<div align="center">
-  <img src="Screenshots/Home.png" width="400px" alt="Halaman Utama">
-  <img src="Screenshots/Batch.png" width="400px" alt="Halaman Prediksi Massal">
-  <img src="Screenshots/Education.png" width="400px" alt="Pusat Edukasi">
-</div>
+### 1. Halaman Utama (Form Prediksi)
+<img src="Screenshots/Home.png" width="100%" alt="Halaman Utama">
+
+### 2. Halaman Prediksi Massal (CSV Batch)
+<img src="Screenshots/Batch.png" width="100%" alt="Halaman Prediksi Massal">
+
+### 3. Pusat Edukasi (Panduan Klinis)
+<img src="Screenshots/Education.png" width="100%" alt="Pusat Edukasi">
 
 ---
 
