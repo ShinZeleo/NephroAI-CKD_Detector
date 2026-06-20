@@ -63,26 +63,37 @@ input[type=range]::-webkit-slider-runnable-track {
 
 /* Native Print Styles */
 @media print {
+  @page {
+    size: portrait;
+    margin: 0.5cm;
+  }
+  
   body {
-    visibility: hidden;
-    height: 100vh;
-    overflow: hidden;
+    background-color: white !important;
     margin: 0;
     padding: 0;
   }
-  #printable-report {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    visibility: visible;
-    border: none !important;
-    box-shadow: none !important;
-  }
-  #printable-report * {
-    visibility: visible;
-  }
-  .print-hide {
+
+  nav, footer, .print-hide {
     display: none !important;
+  }
+
+  .print-w-full {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .min-h-screen {
+    min-height: 0 !important;
+  }
+
+  main {
+    padding-top: 0 !important;
+  }
+
+  #printable-report {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
   }
 }
