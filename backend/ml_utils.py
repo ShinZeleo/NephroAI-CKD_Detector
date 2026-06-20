@@ -76,7 +76,7 @@ def apply_feature_engineering(X):
     
     return Xf
 
-def predict_ckd(patient_data: dict):
+def predict_ckd(patient_data: dict, include_shap: bool = True):
     # Convert dictionary to DataFrame
     df = pd.DataFrame([patient_data])
     
@@ -139,39 +139,40 @@ def predict_ckd(patient_data: dict):
     
     # 5. Explain with SHAP
     shap_data = []
-    try:
-        # Extract the actual estimator from the pipeline (assuming it's a Pipeline and the last step is the model)
-        estimator = model_pipeline.steps[-1][1] if hasattr(model_pipeline, 'steps') else model_pipeline
-        explainer = shap.TreeExplainer(estimator)
-        
-        # Calculate SHAP values for the single instance
-        # shap_values returns a list of arrays for classification (one for each class). We want class 1 (CKD)
-        shap_vals = explainer.shap_values(df_controlled)
-        if isinstance(shap_vals, list):
-            sv = shap_vals[1][0]  # Class 1, first instance
-        else:
-            sv = shap_vals[0] # Some versions return single array for binary
-        
-        # Map to feature names
-        features = df_controlled.columns.tolist()
-        for i, f_name in enumerate(features):
-            val = sv[i]
-            # If val is an array (e.g. binary classification returning [class0_shap, class1_shap])
-            if isinstance(val, (np.ndarray, list)):
-                val = val[1] if len(val) > 1 else val[0]
-                
-            if abs(val) > 0.001:  # Filter out near-zero noise
-                shap_data.append({
-                    "feature": f_name,
-                    "value": float(val)
-                })
-        # Sort by absolute impact
-        shap_data.sort(key=lambda x: abs(x['value']), reverse=True)
-        # Take top 10 most impactful features
-        shap_data = shap_data[:10]
-    except Exception as e:
-        print(f"SHAP explanation failed: {e}")
-        shap_data = []
+    if include_shap:
+        try:
+            # Extract the actual estimator from the pipeline (assuming it's a Pipeline and the last step is the model)
+            estimator = model_pipeline.steps[-1][1] if hasattr(model_pipeline, 'steps') else model_pipeline
+            explainer = shap.TreeExplainer(estimator)
+            
+            # Calculate SHAP values for the single instance
+            # shap_values returns a list of arrays for classification (one for each class). We want class 1 (CKD)
+            shap_vals = explainer.shap_values(df_controlled)
+            if isinstance(shap_vals, list):
+                sv = shap_vals[1][0]  # Class 1, first instance
+            else:
+                sv = shap_vals[0] # Some versions return single array for binary
+            
+            # Map to feature names
+            features = df_controlled.columns.tolist()
+            for i, f_name in enumerate(features):
+                val = sv[i]
+                # If val is an array (e.g. binary classification returning [class0_shap, class1_shap])
+                if isinstance(val, (np.ndarray, list)):
+                    val = val[1] if len(val) > 1 else val[0]
+                    
+                if abs(val) > 0.001:  # Filter out near-zero noise
+                    shap_data.append({
+                        "feature": f_name,
+                        "value": float(val)
+                    })
+            # Sort by absolute impact
+            shap_data.sort(key=lambda x: abs(x['value']), reverse=True)
+            # Take top 10 most impactful features
+            shap_data = shap_data[:10]
+        except Exception as e:
+            print(f"SHAP explanation failed: {e}")
+            shap_data = []
     
     return {
         "prediction": prediction,

@@ -10,24 +10,46 @@
 
 ---
 
+## 🌐 Live Demo
+
+Aplikasi ini telah di-*deploy* dan dapat dicoba secara langsung tanpa perlu melakukan instalasi lokal:
+
+- **Web Application (Frontend):** [Kunjungi NephroAI (Render)](https://nephroai-yqoc.onrender.com)
+- **API Documentation (Backend):** [Kunjungi FastAPI Docs](https://nephroai-ckd-detector.onrender.com/docs) *(Swagger UI)*
+
+---
+
+## 📸 Antarmuka Aplikasi (Screenshots)
+
+### 1. Halaman Utama (Form Prediksi)
+<img src="Screenshots/Home.png" width="100%" alt="Halaman Utama">
+
+### 2. Halaman Prediksi Massal (CSV Batch)
+<img src="Screenshots/Batch.png" width="100%" alt="Halaman Prediksi Massal">
+
+### 3. Pusat Edukasi (Panduan Klinis)
+<img src="Screenshots/Education.png" width="100%" alt="Pusat Edukasi">
+
+---
+
 ## 🌟 Fitur Utama (Advanced Edition)
 
-- **Deteksi Prediktif Akurat:** Ditenagai oleh model *Machine Learning* Random Forest (berdasarkan `ckd_final_v8`) yang tervalidasi menggunakan dataset rekam medis klinis.
+- **Deteksi Prediktif Akurat:** Ditenagai oleh model *Machine Learning* Random Forest (berdasarkan `ckd_model_training.ipynb`) yang tervalidasi menggunakan dataset rekam medis klinis.
 - **Sistem Multi-Bahasa (i18n):** Dukungan penuh penerjemahan antarmuka secara dinamis (**Bahasa Indonesia & Inggris**) tanpa memerlukan pemuatan ulang (*reload*) halaman.
 - **Analisis Transparan (Explainable AI / SHAP):** Visualisasi grafis kontribusi parameter medis menggunakan **SHAP (SHapley Additive exPlanations)**. Membantu dokter memahami *mengapa* pasien dikategorikan berisiko tinggi (Balok Merah: meningkatkan risiko | Balok Hijau: menurunkan risiko).
 - **Analisis Massal (CSV Batch Prediction):** Fitur pengunggahan dataset pasien secara massal dalam format `.csv`. Dilengkapi dengan:
   - Tombol **Unduh Template CSV** langsung di antarmuka web.
   - Ringkasan metrik global pasien (Total Pasien, Total Risiko Tinggi/Rendah).
   - Ikon **Drill-down Analisis SHAP** di setiap baris tabel untuk membedah profil risiko pasien secara individu secara instan.
-- **Ekspor Laporan Klinis (PDF Report):** Fitur cetak laporan medis instan beresolusi tinggi menggunakan `html2pdf.js`, lengkap dengan seluruh grafik SHAP untuk arsip klinik atau dokter.
+- **Ekspor Laporan Klinis (PDF Report):** Fitur cetak laporan medis instan beresolusi tinggi menggunakan *Native Browser Print CSS*, lengkap dengan seluruh grafik SHAP untuk arsip klinik atau dokter.
 - **Fitur "Isi Nilai Normal" (Clinical UX):** Mengisi ke-24 parameter klinis secara instan dengan baseline nilai normal sehat manusia, membantu mempercepat proses pengisian data rekam medis bagi praktisi kesehatan.
 - **Pusat Edukasi Terpadu:** Edukasi patofisiologi penyakit ginjal berdasarkan pedoman klinis global (KDIGO) untuk mendukung edukasi mandiri pasien.
 
 ---
 
-## 🏗️ Arsitektur Sistem
+## 🏗️ Arsitektur Sistem & Deployment
 
-Proyek ini dibangun menggunakan arsitektur *Decoupled* (Terpisah):
+Proyek ini dibangun menggunakan arsitektur *Decoupled* (Terpisah) dan sangat direkomendasikan untuk di-deploy secara terpisah (Frontend di Vercel, Backend di Render):
 
 ```mermaid
 graph TD
@@ -40,8 +62,8 @@ graph TD
     B -->|Render UI / Unduh PDF| A
 ```
 
-1. **Frontend (Web App):** React.js (Vite) + Tailwind CSS + Lucide Icons + Recharts untuk grafik.
-2. **Backend (API Layer):** FastAPI (Python) + Uvicorn + Scikit-Learn + SHAP + Pandas.
+1. **Frontend (Web App):** React.js (Vite) + Tailwind CSS + Lucide Icons + Recharts untuk grafik. (Direkomendasikan *deploy* di **Vercel**).
+2. **Backend (API Layer):** FastAPI (Python) + Uvicorn + Scikit-Learn + SHAP + Pandas. (Direkomendasikan *deploy* di **Render**).
 3. **Machine Learning Pipeline:** Imputasi MICE untuk penanganan *missing values*, Robust/Standard Scaler, dan model Random Forest Classifier.
 
 ---
