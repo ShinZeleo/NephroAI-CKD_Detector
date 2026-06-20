@@ -304,11 +304,15 @@ const BatchPrediction = () => {
               ) : shapData ? (
                 <div>
                   <h4 className="text-xs font-bold text-gray-700 mb-4 uppercase tracking-wider">{t('risk_factors')} (AI Analysis)</h4>
-                  <div className="h-64 w-full">
+                  <div className="h-[280px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={shapData} layout="vertical" margin={{ top: 0, right: 20, left: 0, bottom: 0 }}>
+                      <BarChart 
+                        data={shapData.map(item => ({...item, feature: item.feature.replace(/_/g, ' ')}))} 
+                        layout="vertical" 
+                        margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
+                      >
                         <XAxis type="number" hide />
-                        <YAxis dataKey="feature" type="category" width={130} tick={{ fontSize: 11, fill: '#4b5563', fontWeight: 500 }} axisLine={false} tickLine={false} />
+                        <YAxis dataKey="feature" type="category" width={140} tick={{ fontSize: 11, fill: '#4b5563', fontWeight: 500 }} axisLine={false} tickLine={false} />
                         <Tooltip formatter={(val) => val.toFixed(3)} labelStyle={{ color: '#1f2937', fontWeight: 'bold' }} />
                         <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                           {shapData.map((entry, index) => (
