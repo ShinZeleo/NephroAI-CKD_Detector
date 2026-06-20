@@ -10,6 +10,27 @@
 
 ---
 
+## 🌐 Live Demo
+
+Aplikasi ini telah di-*deploy* dan dapat dicoba secara langsung tanpa perlu melakukan instalasi lokal:
+
+- **Web Application (Frontend):** [Kunjungi NephroAI (Render)](https://nephroai-yqoc.onrender.com)
+- **API Documentation (Backend):** [Kunjungi FastAPI Docs](https://nephroai-ckd-detector.onrender.com/docs) *(Swagger UI)*
+
+---
+
+## 📸 Antarmuka Aplikasi (Screenshots)
+
+> **Catatan untuk Developer:** *Anda dapat mengunggah tangkapan layar (screenshot) aplikasi Anda dan meletakkannya di sini untuk memamerkan antarmuka web yang indah.*
+
+<div align="center">
+  <!-- Ganti tautan gambar di bawah dengan screenshot asli aplikasi Anda -->
+  <!-- <img src="link_gambar_halaman_utama.png" width="400px" alt="Halaman Utama"> -->
+  <!-- <img src="link_gambar_hasil_prediksi.png" width="400px" alt="Hasil Prediksi"> -->
+</div>
+
+---
+
 ## 🌟 Fitur Utama (Advanced Edition)
 
 - **Deteksi Prediktif Akurat:** Ditenagai oleh model *Machine Learning* Random Forest (berdasarkan `ckd_model_training.ipynb`) yang tervalidasi menggunakan dataset rekam medis klinis.
