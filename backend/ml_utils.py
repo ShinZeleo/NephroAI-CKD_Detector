@@ -155,10 +155,15 @@ def predict_ckd(patient_data: dict):
         # Map to feature names
         features = df_controlled.columns.tolist()
         for i, f_name in enumerate(features):
-            if abs(sv[i]) > 0.001:  # Filter out near-zero noise
+            val = sv[i]
+            # If val is an array (e.g. binary classification returning [class0_shap, class1_shap])
+            if isinstance(val, (np.ndarray, list)):
+                val = val[1] if len(val) > 1 else val[0]
+                
+            if abs(val) > 0.001:  # Filter out near-zero noise
                 shap_data.append({
                     "feature": f_name,
-                    "value": float(sv[i])
+                    "value": float(val)
                 })
         # Sort by absolute impact
         shap_data.sort(key=lambda x: abs(x['value']), reverse=True)
