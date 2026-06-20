@@ -63,19 +63,24 @@ input[type=range]::-webkit-slider-runnable-track {
 
 /* Native Print Styles */
 @media print {
-  body * {
+  body {
     visibility: hidden;
-  }
-  #printable-report, #printable-report * {
-    visibility: visible;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
   }
   #printable-report {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
+    visibility: visible;
     border: none !important;
     box-shadow: none !important;
+  }
+  #printable-report * {
+    visibility: visible;
   }
   .print-hide {
     display: none !important;
