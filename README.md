@@ -12,16 +12,16 @@
 
 ## 🌟 Fitur Utama (Advanced Edition)
 
-- **🤖 Deteksi Prediktif Akurat:** Ditenagai oleh model *Machine Learning* Random Forest (berdasarkan `ckd_final_v8`) yang tervalidasi menggunakan dataset rekam medis klinis.
-- **🌐 Sistem Multi-Bahasa (i18n):** Dukungan penuh penerjemahan antarmuka secara dinamis (**Bahasa Indonesia & Inggris**) tanpa memerlukan pemuatan ulang (*reload*) halaman.
-- **🧠 Analisis Transparan (Explainable AI / SHAP):** Visualisasi grafis kontribusi parameter medis menggunakan **SHAP (SHapley Additive exPlanations)**. Membantu dokter memahami *mengapa* pasien dikategorikan berisiko tinggi (Balok Merah: meningkatkan risiko | Balok Hijau: menurunkan risiko).
-- **📂 Analisis Massal (CSV Batch Prediction):** Fitur pengunggahan dataset pasien secara massal dalam format `.csv`. Dilengkapi dengan:
+- **Deteksi Prediktif Akurat:** Ditenagai oleh model *Machine Learning* Random Forest (berdasarkan `ckd_final_v8`) yang tervalidasi menggunakan dataset rekam medis klinis.
+- **Sistem Multi-Bahasa (i18n):** Dukungan penuh penerjemahan antarmuka secara dinamis (**Bahasa Indonesia & Inggris**) tanpa memerlukan pemuatan ulang (*reload*) halaman.
+- **Analisis Transparan (Explainable AI / SHAP):** Visualisasi grafis kontribusi parameter medis menggunakan **SHAP (SHapley Additive exPlanations)**. Membantu dokter memahami *mengapa* pasien dikategorikan berisiko tinggi (Balok Merah: meningkatkan risiko | Balok Hijau: menurunkan risiko).
+- **Analisis Massal (CSV Batch Prediction):** Fitur pengunggahan dataset pasien secara massal dalam format `.csv`. Dilengkapi dengan:
   - Tombol **Unduh Template CSV** langsung di antarmuka web.
   - Ringkasan metrik global pasien (Total Pasien, Total Risiko Tinggi/Rendah).
   - Ikon **Drill-down Analisis SHAP** di setiap baris tabel untuk membedah profil risiko pasien secara individu secara instan.
-- **📄 Ekspor Laporan Klinis (PDF Report):** Fitur cetak laporan medis instan beresolusi tinggi menggunakan `html2pdf.js`, lengkap dengan seluruh grafik SHAP untuk arsip klinik atau dokter.
-- **⚡ Fitur "Isi Nilai Normal" (Clinical UX):** Mengisi ke-24 parameter klinis secara instan dengan baseline nilai normal sehat manusia, membantu mempercepat proses pengisian data rekam medis bagi praktisi kesehatan.
-- **📚 Pusat Edukasi Terpadu:** Edukasi patofisiologi penyakit ginjal berdasarkan pedoman klinis global (KDIGO) untuk mendukung edukasi mandiri pasien.
+- **Ekspor Laporan Klinis (PDF Report):** Fitur cetak laporan medis instan beresolusi tinggi menggunakan `html2pdf.js`, lengkap dengan seluruh grafik SHAP untuk arsip klinik atau dokter.
+- **Fitur "Isi Nilai Normal" (Clinical UX):** Mengisi ke-24 parameter klinis secara instan dengan baseline nilai normal sehat manusia, membantu mempercepat proses pengisian data rekam medis bagi praktisi kesehatan.
+- **Pusat Edukasi Terpadu:** Edukasi patofisiologi penyakit ginjal berdasarkan pedoman klinis global (KDIGO) untuk mendukung edukasi mandiri pasien.
 
 ---
 
@@ -114,4 +114,4 @@ Proyek ini dibuat untuk keperluan akademis dan penelitian (Tugas Pengantar Data 
 > Aplikasi *NephroAI* adalah *Proof of Concept* (PoC) berbasis kecerdasan buatan. Model ini TIDAK BOLEH digunakan sebagai substitusi absolut dari diagnosis klinis dokter. Seluruh indikasi keparahan medis wajib dirujuk dan diverifikasi langsung ke **Dokter Spesialis Penyakit Dalam Konsultan Ginjal Hipertensi (Sp.PD-KGH)** melalui pemeriksaan laboratorium fisik resmi.
 
 ---
-*Didesain dan dikembangkan dengan ❤️ oleh ShinZeleo*
+*Didesain dan dikembangkan dengan ❤️ oleh klp7*
