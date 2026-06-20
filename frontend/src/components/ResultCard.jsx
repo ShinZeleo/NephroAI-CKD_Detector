@@ -1,11 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import html2pdf from 'html2pdf.js';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const ResultCard = ({ result, formData }) => {
   const { t } = useTranslation();
   const reportRef = useRef();
+  const [isDownloading, setIsDownloading] = useState(false);
 
   if (!result) return null;
 
@@ -15,16 +15,29 @@ const ResultCard = ({ result, formData }) => {
   const bgClass = isCKD ? 'bg-red-50' : 'bg-green-50';
   const strokeColor = isCKD ? '#dc2626' : '#0d9488'; // Red-600 vs Teal-600
 
-  const handleDownloadPdf = () => {
-    const element = reportRef.current;
-    const opt = {
-      margin:       0.5,
-      filename:     `NephroAI_Report_${Math.floor(Math.random() * 90000) + 10000}.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true },
-      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-    html2pdf().set(opt).from(element).save();
+  const handleDownloadPdf = async () => {
+    if (isDownloading) return;
+    setIsDownloading(true);
+    try {
+      // Dynamic import to avoid Vite build/import issues with html2pdf
+      const html2pdfModule = await import('html2pdf.js');
+      const html2pdf = html2pdfModule.default || html2pdfModule;
+      
+      const element = reportRef.current;
+      const opt = {
+        margin:       0.5,
+        filename:     `NephroAI_Report_${Math.floor(Math.random() * 90000) + 10000}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      await html2pdf().set(opt).from(element).save();
+    } catch (err) {
+      console.error("Failed to generate PDF:", err);
+      alert("Gagal mengunduh PDF. Silakan coba lagi.");
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   // SVG Gauge Calculations
@@ -129,10 +142,19 @@ const ResultCard = ({ result, formData }) => {
       </div>
       <button 
         onClick={handleDownloadPdf}
-        className="w-full bg-stone-100 hover:bg-stone-200 text-gray-700 font-bold py-3 px-4 rounded-md transition-colors border border-stone-200 flex items-center justify-center space-x-2"
+        disabled={isDownloading}
+        className={`w-full font-bold py-3 px-4 rounded-md transition-colors border flex items-center justify-center space-x-2 
+          ${isDownloading ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : 'bg-stone-100 hover:bg-stone-200 text-gray-700 border-stone-200'}`}
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-        <span>{t('btn_download_pdf')}</span>
+        {isDownloading ? (
+          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        ) : (
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+        )}
+        <span>{isDownloading ? 'Memproses PDF...' : t('btn_download_pdf')}</span>
       </button>
     </div>
   );
