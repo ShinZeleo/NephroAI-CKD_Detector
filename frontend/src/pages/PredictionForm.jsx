@@ -117,10 +117,21 @@ const PredictionForm = ({ setActivePage }) => {
     }
   }
 
-  const renderRangeInput = (name, label, min, max, step = "1", unit = "", ticks = null) => (
-    <div className="space-y-3 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow flex flex-col justify-between">
+  const renderRangeInput = (name, label, min, max, step = "1", unit = "", ticks = null, tooltip = null) => (
+    <div className="space-y-3 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow flex flex-col justify-between group relative">
       <div className="flex justify-between items-center border-b border-gray-50 pb-2">
-        <label className="text-sm font-bold text-gray-800">{label}</label>
+        <div className="flex items-center space-x-1">
+          <label className="text-sm font-bold text-gray-800">{label}</label>
+          {tooltip && (
+            <div className="relative flex items-center">
+              <span className="text-gray-400 hover:text-primary cursor-help text-xs">ⓘ</span>
+              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] font-normal rounded shadow-lg z-10 whitespace-normal">
+                {tooltip}
+                <svg className="absolute text-gray-800 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
+              </div>
+            </div>
+          )}
+        </div>
         <div className="flex items-center space-x-2">
           <input 
             type="number" 
@@ -167,9 +178,20 @@ const PredictionForm = ({ setActivePage }) => {
     return map[val] || val;
   }
 
-  const renderToggleInput = (name, label, options) => (
-    <div className="space-y-3 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow">
-      <label className="text-sm font-bold text-gray-800 block border-b border-gray-50 pb-2">{label}</label>
+  const renderToggleInput = (name, label, options, tooltip = null) => (
+    <div className="space-y-3 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow group relative">
+      <div className="flex items-center space-x-1 border-b border-gray-50 pb-2">
+        <label className="text-sm font-bold text-gray-800 block">{label}</label>
+        {tooltip && (
+          <div className="relative flex items-center">
+            <span className="text-gray-400 hover:text-primary cursor-help text-xs">ⓘ</span>
+            <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] font-normal rounded shadow-lg z-10 whitespace-normal">
+              {tooltip}
+              <svg className="absolute text-gray-800 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
+            </div>
+          </div>
+        )}
+      </div>
       <div className="flex flex-wrap gap-2 pt-1">
         {options.map(opt => (
           <label key={opt} className={`cursor-pointer flex-1 text-center py-2 px-3 rounded-md text-sm font-medium transition-all border ${
@@ -197,32 +219,32 @@ const PredictionForm = ({ setActivePage }) => {
     const sys = parseInt(formData.Systolic);
     const dia = parseInt(formData.Blood_Pressure);
 
-    if (sys >= 160 || dia >= 100) return { label: "Stage 2 Hypertension", color: "text-red-600", bg: "bg-red-50 border-red-200" };
-    if (sys >= 140 || dia >= 90) return { label: "Stage 1 Hypertension", color: "text-orange-600", bg: "bg-orange-50 border-orange-200" };
-    if ((sys >= 120 && sys <= 139) || (dia >= 80 && dia <= 89)) return { label: "Prehypertension", color: "text-yellow-600", bg: "bg-yellow-50 border-yellow-200" };
-    return { label: "Normal", color: "text-green-600", bg: "bg-green-50 border-green-200" };
+    if (sys >= 160 || dia >= 100) return { label: t("bp_cat_stage2"), color: "text-red-600", bg: "bg-red-50 border-red-200" };
+    if (sys >= 140 || dia >= 90) return { label: t("bp_cat_stage1"), color: "text-orange-600", bg: "bg-orange-50 border-orange-200" };
+    if ((sys >= 120 && sys <= 139) || (dia >= 80 && dia <= 89)) return { label: t("bp_cat_pre"), color: "text-yellow-600", bg: "bg-yellow-50 border-yellow-200" };
+    return { label: t("bp_cat_normal"), color: "text-green-600", bg: "bg-green-50 border-green-200" };
   };
 
   const getWarnings = () => {
     const warnings = [];
     if (formData.Serum_Creatinine && parseFloat(formData.Serum_Creatinine) > 5.0) {
-      warnings.push("⚠ Nilai Serum Creatinine sangat tinggi dibanding rentang normal.");
+      warnings.push(t("warn_sc"));
     }
     if (formData.Potassium && parseFloat(formData.Potassium) > 6.0) {
-      warnings.push("⚠ Nilai Kalium (Potassium) sangat tinggi dibanding rentang normal.");
+      warnings.push(t("warn_pot"));
     }
     if (formData.Blood_Glucose_Random && parseFloat(formData.Blood_Glucose_Random) > 300) {
-      warnings.push("⚠ Nilai Gula Darah sangat tinggi dibanding rentang normal.");
+      warnings.push(t("warn_bgr"));
     }
     if (formData.Systolic && parseFloat(formData.Systolic) > 180) {
-      warnings.push("⚠ Nilai Tekanan Darah Systolic sangat tinggi (Krisis Hipertensi).");
+      warnings.push(t("warn_sys"));
     }
 
     // Clinical Inconsistencies
     const age = parseFloat(formData.Age);
     if (!isNaN(age) && age < 12) {
       if (formData.Diabetes_Mellitus === 'yes' || formData.Coronary_Artery_Disease === 'yes' || formData.Hypertension === 'yes') {
-         warnings.push("⚠ Peringatan Klinis: Pasien anak-anak (usia < 12) dengan komorbiditas kronis dewasa (Hipertensi/DM/CAD) tampak tidak konsisten.");
+         warnings.push(t("warn_ped"));
       }
     }
     
@@ -230,7 +252,7 @@ const PredictionForm = ({ setActivePage }) => {
        const cr = parseFloat(formData.Serum_Creatinine);
        const urea = parseFloat(formData.Blood_Urea);
        if (cr < 0.5 && urea < 10 && age > 15) {
-          warnings.push("⚠ Peringatan Klinis: Nilai Kreatinin dan Ureum sangat rendah untuk orang dewasa. Pastikan satuan yang dimasukkan sudah benar.");
+          warnings.push(t("warn_cr_bu"));
        }
     }
 
@@ -273,16 +295,23 @@ const PredictionForm = ({ setActivePage }) => {
             <form onSubmit={handleSubmit}>
               
               <div className={`grid grid-cols-1 md:grid-cols-2 gap-5 ${activeTab === "basic" ? "block" : "hidden"}`}>
-                {renderRangeInput("Age", t("lbl_age"), "18", "100", "1", "Thn", [18, 30, 40, 50, 60, 70, 80, 90, 100])}
-                <div className="space-y-4 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow flex flex-col justify-between">
+                {renderRangeInput("Age", t("lbl_age"), "18", "100", "1", t("unit_years"), [18, 30, 40, 50, 60, 70, 80, 90, 100], t("tt_age"))}
+                <div className="space-y-4 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow flex flex-col justify-between group relative">
                   <div>
-                    <div className="border-b border-gray-50 pb-2">
-                      <label className="text-sm font-bold text-gray-800">{t("lbl_bp") || "Tekanan Darah"}</label>
+                    <div className="border-b border-gray-50 pb-2 flex items-center space-x-1">
+                      <label className="text-sm font-bold text-gray-800">{t("lbl_bp")}</label>
+                      <div className="relative flex items-center">
+                        <span className="text-gray-400 hover:text-primary cursor-help text-xs">ⓘ</span>
+                        <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] font-normal rounded shadow-lg z-10 whitespace-normal">
+                          {t("tt_bp")}
+                          <svg className="absolute text-gray-800 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
+                        </div>
+                      </div>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4 pt-4">
                       <div>
-                        <label className="text-xs text-gray-600 font-semibold mb-1 block">Systolic (mmHg)</label>
+                        <label className="text-xs text-gray-600 font-semibold mb-1 block">{t("sys_label")}</label>
                         <input 
                           type="number" name="Systolic" min="70" max="250" 
                           value={formData.Systolic} onChange={handleChange} placeholder="115" 
@@ -290,7 +319,7 @@ const PredictionForm = ({ setActivePage }) => {
                         />
                       </div>
                       <div>
-                        <label className="text-xs text-gray-600 font-semibold mb-1 block">Diastolic (mmHg)</label>
+                        <label className="text-xs text-gray-600 font-semibold mb-1 block">{t("dia_label")}</label>
                         <input 
                           type="number" name="Blood_Pressure" min="40" max="150" 
                           value={formData.Blood_Pressure} onChange={handleChange} placeholder="75" 
@@ -301,7 +330,7 @@ const PredictionForm = ({ setActivePage }) => {
 
                     {formData.Systolic && formData.Blood_Pressure && (
                       <div className={`mt-4 px-3 py-2 rounded-md border ${getBpCategory()?.bg} flex flex-col xl:flex-row xl:items-center justify-between gap-1`}>
-                        <span className="text-xs font-semibold text-gray-600">Kategori Tekanan Darah:</span>
+                        <span className="text-xs font-semibold text-gray-600">{t("bp_cat_label")}</span>
                         <span className={`text-xs font-bold ${getBpCategory()?.color}`}>{getBpCategory()?.label}</span>
                       </div>
                     )}
@@ -309,39 +338,39 @@ const PredictionForm = ({ setActivePage }) => {
 
                   <div className="mt-4">
                     <p className="text-[10px] text-gray-400 leading-tight bg-gray-50 p-2 rounded border border-gray-100 flex items-start">
-                      <span className="mr-1">ⓘ</span> Model menggunakan nilai tekanan darah diastolik sesuai atribut BP pada dataset UCI CKD.
+                      <span className="mr-1">ⓘ</span> {t("bp_note")}
                     </p>
                   </div>
                 </div>
-                {renderToggleInput("Hypertension", t("lbl_htn"), ["no", "yes"])}
-                {renderToggleInput("Diabetes_Mellitus", t("lbl_dm"), ["no", "yes"])}
-                {renderToggleInput("Coronary_Artery_Disease", t("lbl_cad"), ["no", "yes"])}
-                {renderToggleInput("Appetite", t("lbl_appetite"), ["good", "poor"])}
-                {renderToggleInput("Pedal_Edema", t("lbl_pe"), ["no", "yes"])}
-                {renderToggleInput("Anemia", t("lbl_ane"), ["no", "yes"])}
+                {renderToggleInput("Hypertension", t("lbl_htn"), ["no", "yes"], t("tt_htn"))}
+                {renderToggleInput("Diabetes_Mellitus", t("lbl_dm"), ["no", "yes"], t("tt_dm"))}
+                {renderToggleInput("Coronary_Artery_Disease", t("lbl_cad"), ["no", "yes"], t("tt_cad"))}
+                {renderToggleInput("Appetite", t("lbl_appetite"), ["good", "poor"], t("tt_appetite"))}
+                {renderToggleInput("Pedal_Edema", t("lbl_pe"), ["no", "yes"], t("tt_pe"))}
+                {renderToggleInput("Anemia", t("lbl_ane"), ["no", "yes"], t("tt_ane"))}
               </div>
 
               <div className={`grid grid-cols-1 md:grid-cols-2 gap-5 ${activeTab === "blood" ? "block" : "hidden"}`}>
-                {renderRangeInput("Hemoglobin", t("lbl_hemo"), "3.0", "20.0", "0.1", "g/dL")}
-                {renderRangeInput("Packed_Cell_Volume", t("lbl_pcv"), "10", "60", "1", "%")}
-                {renderRangeInput("White_Blood_Cell_Count", t("lbl_wbc"), "2000", "30000", "100", "sel/µL")}
-                {renderRangeInput("Red_Blood_Cell_Count", t("lbl_rbc"), "2.0", "8.0", "0.1", "juta/µL")}
-                {renderRangeInput("Blood_Glucose_Random", t("lbl_bgr"), "50", "500", "1", "mg/dL")}
-                {renderRangeInput("Blood_Urea", t("lbl_bu"), "5", "300", "1", "mg/dL")}
-                {renderRangeInput("Serum_Creatinine", t("lbl_sc"), "0.1", "30.0", "0.1", "mg/dL")}
-                {renderRangeInput("Sodium", t("lbl_sod"), "110", "160", "1", "mEq/L")}
-                {renderRangeInput("Potassium", t("lbl_pot"), "2.0", "8.0", "0.1", "mEq/L")}
+                {renderRangeInput("Hemoglobin", t("lbl_hemo"), "3.0", "20.0", "0.1", t("unit_gdl"), null, t("tt_hemo"))}
+                {renderRangeInput("Packed_Cell_Volume", t("lbl_pcv"), "10", "60", "1", t("unit_percent"), null, t("tt_pcv"))}
+                {renderRangeInput("White_Blood_Cell_Count", t("lbl_wbc"), "2000", "30000", "100", t("unit_sell"), null, t("tt_wbc"))}
+                {renderRangeInput("Red_Blood_Cell_Count", t("lbl_rbc"), "2.0", "8.0", "0.1", t("unit_juta"), null, t("tt_rbc"))}
+                {renderRangeInput("Blood_Glucose_Random", t("lbl_bgr"), "50", "500", "1", t("unit_mgdl"), null, t("tt_bgr"))}
+                {renderRangeInput("Blood_Urea", t("lbl_bu"), "5", "300", "1", t("unit_mgdl"), null, t("tt_bu"))}
+                {renderRangeInput("Serum_Creatinine", t("lbl_sc"), "0.1", "30.0", "0.1", t("unit_mgdl"), null, t("tt_sc"))}
+                {renderRangeInput("Sodium", t("lbl_sod"), "110", "160", "1", t("unit_meq"), null, t("tt_sod"))}
+                {renderRangeInput("Potassium", t("lbl_pot"), "2.0", "8.0", "0.1", t("unit_meq"), null, t("tt_pot"))}
               </div>
 
               <div className={`grid grid-cols-1 gap-5 ${activeTab === "urine" ? "block" : "hidden"}`}>
-                {renderToggleInput("Specific_Gravity", t("lbl_sg"), ["1.005", "1.010", "1.015", "1.020", "1.025"])}
-                {renderToggleInput("Albumin", t("lbl_al"), ["0.0", "1.0", "2.0", "3.0", "4.0", "5.0"])}
-                {renderToggleInput("Sugar", t("lbl_su"), ["0.0", "1.0", "2.0", "3.0", "4.0", "5.0"])}
+                {renderToggleInput("Specific_Gravity", t("lbl_sg"), ["1.005", "1.010", "1.015", "1.020", "1.025"], t("tt_sg"))}
+                {renderToggleInput("Albumin", t("lbl_al"), ["0.0", "1.0", "2.0", "3.0", "4.0", "5.0"], t("tt_al"))}
+                {renderToggleInput("Sugar", t("lbl_su"), ["0.0", "1.0", "2.0", "3.0", "4.0", "5.0"], t("tt_su"))}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {renderToggleInput("Red_Blood_Cells", t("lbl_rbcc"), ["normal", "abnormal"])}
-                  {renderToggleInput("Pus_Cell", t("lbl_pc"), ["normal", "abnormal"])}
-                  {renderToggleInput("Pus_Cell_clumps", t("lbl_pcc"), ["notpresent", "present"])}
-                  {renderToggleInput("Bacteria", t("lbl_ba"), ["notpresent", "present"])}
+                  {renderToggleInput("Red_Blood_Cells", t("lbl_rbcc"), ["normal", "abnormal"], t("tt_rbcc"))}
+                  {renderToggleInput("Pus_Cell", t("lbl_pc"), ["normal", "abnormal"], t("tt_pc"))}
+                  {renderToggleInput("Pus_Cell_clumps", t("lbl_pcc"), ["notpresent", "present"], t("tt_pcc"))}
+                  {renderToggleInput("Bacteria", t("lbl_ba"), ["notpresent", "present"], t("tt_ba"))}
                 </div>
               </div>
 
@@ -354,7 +383,7 @@ const PredictionForm = ({ setActivePage }) => {
                       </svg>
                     </div>
                     <div className="ml-3">
-                      <h3 className="text-sm font-bold text-yellow-800">Perhatian: Input Abnormal</h3>
+                      <h3 className="text-sm font-bold text-yellow-800">{t("warn_title")}</h3>
                       <div className="mt-2 text-sm text-yellow-700">
                         <ul className="list-disc pl-5 space-y-1">
                           {warnings.map((w, idx) => <li key={idx}>{w}</li>)}
