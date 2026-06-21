@@ -145,8 +145,8 @@ const ResultCard = ({ result, formData, setActivePage }) => {
           <span className="text-xs text-gray-400 font-mono">ID: #{Math.floor(Math.random() * 90000) + 10000}</span>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center gap-8 mb-8 border-b border-gray-50 pb-8">
-          <div className="relative w-40 h-40 flex-shrink-0">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start w-full gap-6 sm:gap-8 mb-8 border-b border-gray-50 pb-8">
+          <div className="relative w-32 h-32 sm:w-40 sm:h-40 flex-shrink-0">
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 140 140">
               <circle cx="70" cy="70" r={radius} fill="transparent" stroke="#f5f5f4" strokeWidth="8" />
               <circle cx="70" cy="70" r={radius} fill="transparent" stroke={strokeColor} strokeWidth="8" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="square" className="transition-all duration-1000 ease-out" />
@@ -159,15 +159,15 @@ const ResultCard = ({ result, formData, setActivePage }) => {
             </div>
           </div>
           
-          <div className="flex-1 text-center md:text-left">
+          <div className="flex-1 w-full text-center sm:text-left mt-2 sm:mt-0">
             <h2 className={`text-3xl font-serif font-bold mb-1 ${strokeColor === '#dc2626' ? 'text-red-700' : (strokeColor === '#f97316' ? 'text-orange-600' : 'text-teal-700')}`}>
               Risiko CKD {riskCategory}
             </h2>
-            <p className="text-gray-600 text-sm font-medium mb-3">
+            <p className="text-gray-600 text-sm font-medium mb-4">
               Prediksi Saat Ini: <span className="font-bold">{isCKD ? 'Terindikasi CKD' : 'Tidak Terindikasi CKD'}</span>
             </p>
             
-            <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-4 print-hide">
+            <div className="flex flex-wrap gap-2 justify-center sm:justify-start mb-5 print-hide">
                <span className="px-2.5 py-1 bg-stone-100 text-stone-600 text-xs rounded-md font-medium border border-stone-200">
                  Confidence: <strong className="text-stone-800">{confidenceStr}</strong>
                </span>
@@ -177,9 +177,9 @@ const ResultCard = ({ result, formData, setActivePage }) => {
             </div>
 
             <div className="bg-blue-50/50 border border-blue-100 p-4 rounded-md">
-              <h3 className="text-xs font-bold text-blue-800 mb-1 uppercase tracking-wider">Ringkasan Klinis</h3>
+              <h3 className="text-xs font-bold text-blue-800 mb-1.5 uppercase tracking-wider">Ringkasan Klinis</h3>
               <p className="text-xs text-blue-900 leading-relaxed">
-                Pasien berusia {formData?.Age || '-'} tahun dengan estimasi fungsi ginjal {egfrCategory.toLowerCase()} {result.egfr ? `(eGFR: ${result.egfr.toFixed(1)})` : ''}. 
+                Pasien berusia {formData?.Age || '-'} tahun dengan kondisi <strong>{egfrCategory.toLowerCase()}</strong> {result.egfr ? `(eGFR: ${result.egfr.toFixed(1)})` : ''}. 
                 Berdasarkan analisis parameter klinis secara keseluruhan, risiko terjadinya Chronic Kidney Disease (CKD) saat ini tergolong <strong>{riskCategory.toLowerCase()}</strong>.
               </p>
             </div>
