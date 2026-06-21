@@ -117,8 +117,8 @@ const PredictionForm = ({ setActivePage }) => {
     }
   }
 
-  const renderRangeInput = (name, label, min, max, step = "1", unit = "") => (
-    <div className="space-y-3 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow">
+  const renderRangeInput = (name, label, min, max, step = "1", unit = "", ticks = null) => (
+    <div className="space-y-3 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow flex flex-col justify-between">
       <div className="flex justify-between items-center border-b border-gray-50 pb-2">
         <label className="text-sm font-bold text-gray-800">{label}</label>
         <div className="flex items-center space-x-2">
@@ -136,13 +136,24 @@ const PredictionForm = ({ setActivePage }) => {
           <span className="text-xs text-gray-500 font-normal">{unit}</span>
         </div>
       </div>
-      <div className="pt-2">
-        <input type="range" min={min} max={max} step={step} name={name} value={formData[name] === "" ? min : formData[name]} onChange={handleChange} className="w-full" />
+      <div className="pt-2 relative">
+        <input type="range" min={min} max={max} step={step} name={name} value={formData[name] === "" ? min : formData[name]} onChange={handleChange} className="w-full" list={ticks ? `${name}-ticks` : undefined} />
+        {ticks && (
+          <datalist id={`${name}-ticks`} className="hidden">
+            {ticks.map(t => <option key={t} value={t}></option>)}
+          </datalist>
+        )}
       </div>
-      <div className="flex justify-between text-xs text-gray-400 font-medium">
-        <span>{min} {unit}</span>
-        <span>{max} {unit}</span>
-      </div>
+      {ticks ? (
+        <div className="flex justify-between text-[10px] text-gray-400 font-medium px-1">
+          {ticks.map(t => <span key={t}>{t}</span>)}
+        </div>
+      ) : (
+        <div className="flex justify-between text-xs text-gray-400 font-medium">
+          <span>{min} {unit}</span>
+          <span>{max} {unit}</span>
+        </div>
+      )}
     </div>
   )
 
@@ -262,40 +273,45 @@ const PredictionForm = ({ setActivePage }) => {
             <form onSubmit={handleSubmit}>
               
               <div className={`grid grid-cols-1 md:grid-cols-2 gap-5 ${activeTab === "basic" ? "block" : "hidden"}`}>
-                {renderRangeInput("Age", t("lbl_age"), "1", "120", "1", "Thn")}
-                <div className="space-y-4 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow">
-                  <div className="border-b border-gray-50 pb-2">
-                    <label className="text-sm font-bold text-gray-800">{t("lbl_bp") || "Tekanan Darah"}</label>
-                    <p className="text-[10px] text-gray-400 mt-1 leading-tight">
-                      Catatan: Model CKD menggunakan nilai tekanan darah diastolik (BP) sesuai atribut pada dataset UCI Chronic Kidney Disease.
-                    </p>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4 pt-1">
-                    <div>
-                      <label className="text-xs text-gray-600 font-semibold mb-1 block">Systolic (mmHg)</label>
-                      <input 
-                        type="number" name="Systolic" min="70" max="250" 
-                        value={formData.Systolic} onChange={handleChange} placeholder="120" 
-                        className="w-full font-bold text-primary text-sm border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-stone-50" 
-                      />
+                {renderRangeInput("Age", t("lbl_age"), "18", "100", "1", "Thn", [18, 30, 40, 50, 60, 70, 80, 90, 100])}
+                <div className="space-y-4 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow flex flex-col justify-between">
+                  <div>
+                    <div className="border-b border-gray-50 pb-2">
+                      <label className="text-sm font-bold text-gray-800">{t("lbl_bp") || "Tekanan Darah"}</label>
                     </div>
-                    <div>
-                      <label className="text-xs text-gray-600 font-semibold mb-1 block">Diastolic (mmHg)</label>
-                      <input 
-                        type="number" name="Blood_Pressure" min="40" max="150" 
-                        value={formData.Blood_Pressure} onChange={handleChange} placeholder="80" 
-                        className="w-full font-bold text-primary text-sm border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-stone-50" 
-                      />
+                    
+                    <div className="grid grid-cols-2 gap-4 pt-4">
+                      <div>
+                        <label className="text-xs text-gray-600 font-semibold mb-1 block">Systolic (mmHg)</label>
+                        <input 
+                          type="number" name="Systolic" min="70" max="250" 
+                          value={formData.Systolic} onChange={handleChange} placeholder="115" 
+                          className="w-full font-bold text-primary text-sm border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-stone-50" 
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-600 font-semibold mb-1 block">Diastolic (mmHg)</label>
+                        <input 
+                          type="number" name="Blood_Pressure" min="40" max="150" 
+                          value={formData.Blood_Pressure} onChange={handleChange} placeholder="75" 
+                          className="w-full font-bold text-primary text-sm border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-stone-50" 
+                        />
+                      </div>
                     </div>
+
+                    {formData.Systolic && formData.Blood_Pressure && (
+                      <div className={`mt-4 px-3 py-2 rounded-md border ${getBpCategory()?.bg} flex flex-col xl:flex-row xl:items-center justify-between gap-1`}>
+                        <span className="text-xs font-semibold text-gray-600">Kategori Tekanan Darah:</span>
+                        <span className={`text-xs font-bold ${getBpCategory()?.color}`}>{getBpCategory()?.label}</span>
+                      </div>
+                    )}
                   </div>
 
-                  {formData.Systolic && formData.Blood_Pressure && (
-                    <div className={`mt-3 px-3 py-2 rounded-md border ${getBpCategory()?.bg} flex flex-col xl:flex-row xl:items-center justify-between gap-1`}>
-                      <span className="text-xs font-semibold text-gray-600">Kategori Tekanan Darah:</span>
-                      <span className={`text-xs font-bold ${getBpCategory()?.color}`}>{getBpCategory()?.label}</span>
-                    </div>
-                  )}
+                  <div className="mt-4">
+                    <p className="text-[10px] text-gray-400 leading-tight bg-gray-50 p-2 rounded border border-gray-100 flex items-start">
+                      <span className="mr-1">ⓘ</span> Model menggunakan nilai tekanan darah diastolik sesuai atribut BP pada dataset UCI CKD.
+                    </p>
+                  </div>
                 </div>
                 {renderToggleInput("Hypertension", t("lbl_htn"), ["no", "yes"])}
                 {renderToggleInput("Diabetes_Mellitus", t("lbl_dm"), ["no", "yes"])}
