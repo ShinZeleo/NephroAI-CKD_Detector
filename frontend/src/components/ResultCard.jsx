@@ -5,6 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 
 const ResultCard = ({ result, formData, setActivePage }) => {
   const { t } = useTranslation();
   const reportRef = useRef();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   if (!result) return null;
 
@@ -137,7 +138,7 @@ const ResultCard = ({ result, formData, setActivePage }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4 max-h-[850px] overflow-y-auto overflow-x-hidden pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-stone-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-stone-400">
+    <div className={`flex flex-col gap-4 relative transition-all duration-700 ease-in-out ${isExpanded ? '' : 'max-h-[780px] overflow-hidden'} rounded-2xl`}>
       <div id="printable-report" className={`mt-0 bg-white border border-gray-200 clinical-shadow rounded-xl p-6 md:p-8 ${riskCategory === 'Tinggi' ? 'border-t-4 border-t-red-600' : (riskCategory === 'Sedang' ? 'border-t-4 border-t-orange-500' : 'border-t-4 border-t-teal-600')}`}>
         
         <div className="border-b border-gray-100 pb-4 mb-6 flex justify-between items-center">
@@ -315,11 +316,23 @@ const ResultCard = ({ result, formData, setActivePage }) => {
 
       <button 
         onClick={handleDownloadPdf}
-        className="print-hide w-full font-bold py-3 px-4 rounded-md transition-colors border flex items-center justify-center space-x-2 bg-stone-100 hover:bg-stone-200 text-gray-700 border-stone-200"
+        className="print-hide w-full font-bold py-3 px-4 rounded-md transition-colors border flex items-center justify-center space-x-2 bg-stone-100 hover:bg-stone-200 text-gray-700 border-stone-200 mt-2"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
         <span>Download Clinical Report (PDF)</span>
       </button>
+
+      {!isExpanded && (
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#fafaf9] via-[#fafaf9]/90 to-transparent flex items-end justify-center pb-6 z-10">
+          <button 
+            onClick={() => setIsExpanded(true)}
+            className="bg-primary text-white px-7 py-2.5 rounded-full font-bold shadow-[0_4px_14px_0_rgba(13,148,136,0.39)] hover:bg-teal-700 hover:shadow-[0_6px_20px_rgba(13,148,136,0.23)] hover:-translate-y-1 transition-all duration-300 flex items-center text-sm tracking-wide"
+          >
+            <span>Lihat Analisis Lengkap</span>
+            <svg className="w-4 h-4 ml-2 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
