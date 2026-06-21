@@ -120,17 +120,19 @@ const PredictionForm = ({ setActivePage }) => {
   const renderRangeInput = (name, label, min, max, step = "1", unit = "", ticks = null, tooltip = null) => (
     <div className="space-y-3 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow flex flex-col justify-between group relative">
       <div className="flex justify-between items-center border-b border-gray-50 pb-2">
-        <div className="flex items-center space-x-1">
-          <label className="text-sm font-bold text-gray-800">{label}</label>
-          {tooltip && (
-            <div className="relative flex items-center">
-              <span className="text-gray-400 hover:text-primary cursor-help text-xs">ⓘ</span>
-              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] font-normal rounded shadow-lg z-10 whitespace-normal">
-                {tooltip}
-                <svg className="absolute text-gray-800 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
-              </div>
-            </div>
-          )}
+        <div className="flex-1 pr-2">
+          <label className="text-sm font-bold text-gray-800 leading-tight">
+            {label}
+            {tooltip && (
+              <span className="relative inline-block ml-1 group/tooltip align-middle">
+                <span className="text-gray-400 hover:text-primary cursor-help text-xs leading-none">ⓘ</span>
+                <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover/tooltip:block w-48 p-2 bg-gray-800 text-white text-[10px] font-normal rounded shadow-lg z-10 whitespace-normal text-left">
+                  {tooltip}
+                  <svg className="absolute text-gray-800 h-2 w-full left-1/2 -translate-x-1/2 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
+                </span>
+              </span>
+            )}
+          </label>
         </div>
         <div className="flex items-center space-x-2">
           <input 
@@ -179,18 +181,20 @@ const PredictionForm = ({ setActivePage }) => {
   }
 
   const renderToggleInput = (name, label, options, tooltip = null) => (
-    <div className="space-y-3 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow group relative">
-      <div className="flex items-center space-x-1 border-b border-gray-50 pb-2">
-        <label className="text-sm font-bold text-gray-800 block">{label}</label>
-        {tooltip && (
-          <div className="relative flex items-center">
-            <span className="text-gray-400 hover:text-primary cursor-help text-xs">ⓘ</span>
-            <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] font-normal rounded shadow-lg z-10 whitespace-normal">
-              {tooltip}
-              <svg className="absolute text-gray-800 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
-            </div>
-          </div>
-        )}
+    <div className="space-y-3 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow">
+      <div className="border-b border-gray-50 pb-2">
+        <label className="text-sm font-bold text-gray-800 leading-tight">
+          {label}
+          {tooltip && (
+            <span className="relative inline-block ml-1 group/tooltip align-middle">
+              <span className="text-gray-400 hover:text-primary cursor-help text-xs leading-none">ⓘ</span>
+              <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover/tooltip:block w-48 p-2 bg-gray-800 text-white text-[10px] font-normal rounded shadow-lg z-10 whitespace-normal text-left">
+                {tooltip}
+                <svg className="absolute text-gray-800 h-2 w-full left-1/2 -translate-x-1/2 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
+              </span>
+            </span>
+          )}
+        </label>
       </div>
       <div className="flex flex-wrap gap-2 pt-1">
         {options.map(opt => (
@@ -298,15 +302,17 @@ const PredictionForm = ({ setActivePage }) => {
                 {renderRangeInput("Age", t("lbl_age"), "18", "100", "1", t("unit_years"), [18, 30, 40, 50, 60, 70, 80, 90, 100], t("tt_age"))}
                 <div className="space-y-4 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow flex flex-col justify-between group relative">
                   <div>
-                    <div className="border-b border-gray-50 pb-2 flex items-center space-x-1">
-                      <label className="text-sm font-bold text-gray-800">{t("lbl_bp")}</label>
-                      <div className="relative flex items-center">
-                        <span className="text-gray-400 hover:text-primary cursor-help text-xs">ⓘ</span>
-                        <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] font-normal rounded shadow-lg z-10 whitespace-normal">
-                          {t("tt_bp")}
-                          <svg className="absolute text-gray-800 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
-                        </div>
-                      </div>
+                    <div className="border-b border-gray-50 pb-2">
+                      <label className="text-sm font-bold text-gray-800 leading-tight">
+                        {t("lbl_bp")}
+                        <span className="relative inline-block ml-1 group/tooltip align-middle">
+                          <span className="text-gray-400 hover:text-primary cursor-help text-xs leading-none">ⓘ</span>
+                          <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover/tooltip:block w-48 p-2 bg-gray-800 text-white text-[10px] font-normal rounded shadow-lg z-10 whitespace-normal text-left">
+                            {t("tt_bp")}
+                            <svg className="absolute text-gray-800 h-2 w-full left-1/2 -translate-x-1/2 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
+                          </span>
+                        </span>
+                      </label>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4 pt-4">
