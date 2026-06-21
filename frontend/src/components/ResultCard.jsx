@@ -137,8 +137,8 @@ const ResultCard = ({ result, formData, setActivePage }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div id="printable-report" className={`mt-0 bg-white border border-gray-200 clinical-shadow p-6 md:p-8 ${riskCategory === 'Tinggi' ? 'border-t-4 border-t-red-600' : (riskCategory === 'Sedang' ? 'border-t-4 border-t-orange-500' : 'border-t-4 border-t-teal-600')}`}>
+    <div className="flex flex-col gap-4 max-h-[850px] overflow-y-auto overflow-x-hidden pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-stone-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-stone-400">
+      <div id="printable-report" className={`mt-0 bg-white border border-gray-200 clinical-shadow rounded-xl p-6 md:p-8 ${riskCategory === 'Tinggi' ? 'border-t-4 border-t-red-600' : (riskCategory === 'Sedang' ? 'border-t-4 border-t-orange-500' : 'border-t-4 border-t-teal-600')}`}>
         
         <div className="border-b border-gray-100 pb-4 mb-6 flex justify-between items-center">
           <h2 className="font-serif font-bold text-lg text-primary tracking-wide uppercase">Clinical Report</h2>
@@ -304,7 +304,6 @@ const ResultCard = ({ result, formData, setActivePage }) => {
                 </div>
               </div>
             </div>
-          )}
           )}
         </div>
       </div>
