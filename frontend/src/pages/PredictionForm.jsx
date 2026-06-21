@@ -124,8 +124,10 @@ const PredictionForm = ({ setActivePage }) => {
           <label className="text-sm font-bold text-gray-800 leading-tight">
             {label}
             {tooltip && (
-              <span className="relative inline-block ml-1 group/tooltip align-middle">
-                <span className="text-gray-400 hover:text-primary cursor-help text-xs leading-none">ⓘ</span>
+              <span className="relative inline-flex items-center ml-1.5 group/tooltip align-text-bottom pb-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-[14px] h-[14px] text-gray-400 group-hover/tooltip:text-primary cursor-help transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
                 <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover/tooltip:block w-48 p-2 bg-gray-800 text-white text-[10px] font-normal rounded shadow-lg z-10 whitespace-normal text-left">
                   {tooltip}
                   <svg className="absolute text-gray-800 h-2 w-full left-1/2 -translate-x-1/2 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
@@ -186,8 +188,10 @@ const PredictionForm = ({ setActivePage }) => {
         <label className="text-sm font-bold text-gray-800 leading-tight">
           {label}
           {tooltip && (
-            <span className="relative inline-block ml-1 group/tooltip align-middle">
-              <span className="text-gray-400 hover:text-primary cursor-help text-xs leading-none">ⓘ</span>
+            <span className="relative inline-flex items-center ml-1.5 group/tooltip align-text-bottom pb-0.5">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-[14px] h-[14px] text-gray-400 group-hover/tooltip:text-primary cursor-help transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
               <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover/tooltip:block w-48 p-2 bg-gray-800 text-white text-[10px] font-normal rounded shadow-lg z-10 whitespace-normal text-left">
                 {tooltip}
                 <svg className="absolute text-gray-800 h-2 w-full left-1/2 -translate-x-1/2 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
