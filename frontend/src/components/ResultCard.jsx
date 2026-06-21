@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
-const ResultCard = ({ result, formData }) => {
+const ResultCard = ({ result, formData, setActivePage }) => {
   const { t } = useTranslation();
   const reportRef = useRef();
 
@@ -48,6 +48,73 @@ const ResultCard = ({ result, formData }) => {
     if (parseFloat(formData.Hemoglobin) < 12) criticalFactors.push({ name: 'Indikasi Anemia', val: `${formData.Hemoglobin} g/dL` });
   }
 
+  const shapFeatureMapping = {
+    "Packed_Cell_Volume": "Packed Cell Volume (Hematokrit)",
+    "Red_Blood_Cell_Count": "Red Blood Cell Count (Sel Darah Merah)",
+    "White_Blood_Cell_Count": "White Blood Cell Count (Sel Darah Putih)",
+    "Serum_Creatinine": "Serum Creatinine (Kreatinin)",
+    "Blood_Urea": "Blood Urea (Ureum)",
+    "Blood_Glucose_Random": "Blood Glucose Random (Gula Darah Acak)",
+    "Blood_Pressure": "Blood Pressure (Tekanan Darah)",
+    "Specific_Gravity": "Specific Gravity (Berat Jenis Urine)",
+    "Albumin": "Albumin (Protein Urine)",
+    "Sugar": "Sugar (Gula Urine)",
+    "Pus_Cell": "Pus Cell (Sel Nanah)",
+    "Red_Blood_Cells": "Red Blood Cells (Sel Darah Merah Urine)",
+    "Pus_Cell_clumps": "Pus Cell Clumps (Gumpalan Sel Nanah)",
+    "Bacteria": "Bacteria (Bakteri Urine)",
+    "Hypertension": "Hypertension (Hipertensi)",
+    "Diabetes_Mellitus": "Diabetes Mellitus (Kencing Manis)",
+    "Coronary_Artery_Disease": "Coronary Artery Disease (Penyakit Jantung)",
+    "Appetite": "Appetite (Nafsu Makan)",
+    "Pedal_Edema": "Pedal Edema (Bengkak Kaki)",
+    "Anemia": "Anemia (Kurang Darah)",
+    "Age": "Age (Usia)",
+    "Sodium": "Sodium (Natrium)",
+    "Potassium": "Potassium (Kalium)",
+    "Hemoglobin": "Hemoglobin (Hb)"
+  };
+
+  const getShapNarrative = (shap_values) => {
+    if (!shap_values || shap_values.length === 0) return null;
+    const sorted = [...shap_values].sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
+    const topFactors = sorted.slice(0, 4);
+
+    return (
+      <div className="mt-6 mb-2">
+        <h4 className="text-sm font-bold text-gray-800 mb-2">Mengapa Risiko Anda {riskCategory}?</h4>
+        <ul className="space-y-3 mt-3 text-sm text-gray-700">
+          {topFactors.map((factor, idx) => {
+            const aliasName = shapFeatureMapping[factor.feature] || factor.feature.replace(/_/g, ' ');
+            if (factor.value > 0) {
+               return (
+                 <li key={idx} className="flex items-start">
+                   <span className="text-red-500 mr-2 mt-0.5">↑</span> 
+                   <span><strong>{aliasName}</strong> berkontribusi meningkatkan risiko Anda.</span>
+                 </li>
+               );
+            } else {
+               return (
+                 <li key={idx} className="flex items-start">
+                   <span className="text-green-500 mr-2 mt-0.5">↓</span> 
+                   <span><strong>{aliasName}</strong> berkontribusi menurunkan (menjaga) risiko Anda.</span>
+                 </li>
+               );
+            }
+          })}
+        </ul>
+        {setActivePage && (
+          <button 
+            onClick={() => setActivePage('education')}
+            className="mt-5 btn-print-hide text-xs font-bold bg-blue-50 text-blue-700 py-2 px-4 rounded hover:bg-blue-100 transition-colors inline-flex items-center"
+          >
+            Pelajari Lebih Lanjut di Education Center <span className="ml-1">→</span>
+          </button>
+        )}
+      </div>
+    );
+  };
+
   const CustomShapTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
@@ -58,7 +125,7 @@ const ResultCard = ({ result, formData }) => {
       
       return (
         <div className="bg-white p-3 border border-gray-200 shadow-lg rounded-md max-w-xs z-50">
-          <p className="font-bold text-gray-800 text-xs mb-1">{feat}</p>
+          <p className="font-bold text-gray-800 text-xs mb-1">{shapFeatureMapping[feat] || feat.replace(/_/g, ' ')}</p>
           <p className="text-[10px] text-gray-600 leading-relaxed">{insight}</p>
           <p className={`text-[10px] font-mono mt-2 font-bold ${val > 0 ? 'text-red-600' : 'text-green-600'}`}>
             SHAP Value: {val.toFixed(3)}
@@ -182,12 +249,12 @@ const ResultCard = ({ result, formData }) => {
               <div className="h-[320px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
-                    data={result.shap_values.map(item => ({...item, feature: item.feature.replace(/_/g, ' ')}))} 
+                    data={result.shap_values.map(item => ({...item, featureName: shapFeatureMapping[item.feature] || item.feature.replace(/_/g, ' ')}))} 
                     layout="vertical" 
                     margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
                   >
                     <XAxis type="number" hide />
-                    <YAxis dataKey="feature" type="category" width={140} tick={{ fontSize: 11, fill: '#4b5563', fontWeight: 500 }} axisLine={false} tickLine={false} />
+                    <YAxis dataKey="featureName" type="category" width={180} tick={{ fontSize: 10, fill: '#4b5563', fontWeight: 500 }} axisLine={false} tickLine={false} />
                     <Tooltip content={<CustomShapTooltip />} cursor={{fill: '#f5f5f4'}} />
                     <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                       {result.shap_values.map((entry, index) => (
@@ -197,11 +264,21 @@ const ResultCard = ({ result, formData }) => {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <p className="text-[10px] text-gray-400 mt-2 text-center">Arahkan kursor ke grafik untuk melihat insight detail pengaruh masing-masing faktor.</p>
+              <p className="text-[10px] text-gray-400 mt-2 text-center print-hide">Arahkan kursor ke grafik untuk melihat insight detail pengaruh masing-masing faktor.</p>
+              
+              <div className="border-t border-gray-100 mt-5 pt-2">
+                {getShapNarrative(result.shap_values)}
+              </div>
             </div>
           )}
         </div>
       </div>
+      
+      <div className="mt-4 pt-4 border-t border-gray-200 text-center text-[10px] text-gray-400 max-w-sm mx-auto leading-relaxed">
+        Model Explainable AI ini dirancang sebagai alat bantu skrining awal. <br className="hidden md:block"/>
+        Hasil prediksi <strong>tidak menggantikan diagnosis medis dari dokter</strong> atau pemeriksaan klinis/laboratorium menyeluruh.
+      </div>
+
       <button 
         onClick={handleDownloadPdf}
         className="print-hide w-full font-bold py-3 px-4 rounded-md transition-colors border flex items-center justify-center space-x-2 bg-stone-100 hover:bg-stone-200 text-gray-700 border-stone-200"

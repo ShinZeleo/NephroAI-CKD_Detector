@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ResultCard from '../components/ResultCard';
 
-const PredictionForm = () => {
+const PredictionForm = ({ setActivePage }) => {
   const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
@@ -206,6 +206,23 @@ const PredictionForm = () => {
     if (formData.Systolic && parseFloat(formData.Systolic) > 180) {
       warnings.push("⚠ Nilai Tekanan Darah Systolic sangat tinggi (Krisis Hipertensi).");
     }
+
+    // Clinical Inconsistencies
+    const age = parseFloat(formData.Age);
+    if (!isNaN(age) && age < 12) {
+      if (formData.Diabetes_Mellitus === 'yes' || formData.Coronary_Artery_Disease === 'yes' || formData.Hypertension === 'yes') {
+         warnings.push("⚠ Peringatan Klinis: Pasien anak-anak (usia < 12) dengan komorbiditas kronis dewasa (Hipertensi/DM/CAD) tampak tidak konsisten.");
+      }
+    }
+    
+    if (formData.Serum_Creatinine && formData.Blood_Urea) {
+       const cr = parseFloat(formData.Serum_Creatinine);
+       const urea = parseFloat(formData.Blood_Urea);
+       if (cr < 0.5 && urea < 10 && age > 15) {
+          warnings.push("⚠ Peringatan Klinis: Nilai Kreatinin dan Ureum sangat rendah untuk orang dewasa. Pastikan satuan yang dimasukkan sudah benar.");
+       }
+    }
+
     return warnings;
   };
 
@@ -398,7 +415,7 @@ const PredictionForm = () => {
             </div>
           )}
 
-          <ResultCard result={result} formData={formData} />
+          <ResultCard result={result} formData={formData} setActivePage={setActivePage} />
         </div>
       </div>
     </div>

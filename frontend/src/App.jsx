@@ -11,13 +11,13 @@ function App() {
   const renderPage = () => {
     switch (activePage) {
       case 'home':
-        return <PredictionForm />
+        return <PredictionForm setActivePage={setActivePage} />
       case 'batch':
         return <BatchPrediction />
       case 'education':
         return <Education />
       default:
-        return <PredictionForm />
+        return <PredictionForm setActivePage={setActivePage} />
     }
   }
 
