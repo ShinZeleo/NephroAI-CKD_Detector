@@ -27,7 +27,7 @@ const ResultCard = ({ result, formData }) => {
   // Determine Critical Factors
   const criticalFactors = [];
   if (isCKD && formData) {
-    if (parseFloat(formData.Blood_Pressure) > 90) criticalFactors.push({ name: 'Tekanan Darah Tinggi', val: `${formData.Blood_Pressure} mmHg` });
+    if (parseFloat(formData.Systolic) >= 140 || parseFloat(formData.Blood_Pressure) >= 90) criticalFactors.push({ name: 'Tekanan Darah Tinggi', val: formData.Systolic ? `${formData.Systolic}/${formData.Blood_Pressure} mmHg` : `${formData.Blood_Pressure} mmHg` });
     if (parseFloat(formData.Serum_Creatinine) > 1.2) criticalFactors.push({ name: 'Kreatinin Abnormal', val: `${formData.Serum_Creatinine} mg/dL` });
     if (parseFloat(formData.Blood_Glucose_Random) > 200) criticalFactors.push({ name: 'Gula Darah Tinggi', val: `${formData.Blood_Glucose_Random} mg/dL` });
     if (parseFloat(formData.Hemoglobin) < 12) criticalFactors.push({ name: 'Indikasi Anemia', val: `${formData.Hemoglobin} g/dL` });

@@ -7,6 +7,7 @@ const PredictionForm = () => {
 
   const [formData, setFormData] = useState({
     Age: "",
+    Systolic: "",
     Blood_Pressure: "",
     Specific_Gravity: "",
     Albumin: "",
@@ -48,7 +49,8 @@ const PredictionForm = () => {
   const handleFillNormal = () => {
     setFormData({
       Age: "35",
-      Blood_Pressure: "120",
+      Systolic: "120",
+      Blood_Pressure: "80",
       Specific_Gravity: "1.020",
       Albumin: "0.0",
       Sugar: "0.0",
@@ -80,10 +82,11 @@ const PredictionForm = () => {
     setError(null)
     setResult(null)
 
-    const numericFields = ['Age', 'Blood_Pressure', 'Blood_Glucose_Random', 'Blood_Urea', 'Serum_Creatinine', 'Sodium', 'Potassium', 'Hemoglobin', 'Packed_Cell_Volume', 'White_Blood_Cell_Count', 'Red_Blood_Cell_Count']
+    const numericFields = ['Age', 'Systolic', 'Blood_Pressure', 'Blood_Glucose_Random', 'Blood_Urea', 'Serum_Creatinine', 'Sodium', 'Potassium', 'Hemoglobin', 'Packed_Cell_Volume', 'White_Blood_Cell_Count', 'Red_Blood_Cell_Count']
     
     const payload = {}
     for (const key in formData) {
+      if (key === "Systolic") continue; // Skip Systolic, model only takes Diastolic (Blood_Pressure)
       if (formData[key] === "") {
         payload[key] = null
       } else {
@@ -178,6 +181,17 @@ const PredictionForm = () => {
     </div>
   )
 
+  const getBpCategory = () => {
+    if (!formData.Systolic || !formData.Blood_Pressure) return null;
+    const sys = parseInt(formData.Systolic);
+    const dia = parseInt(formData.Blood_Pressure);
+
+    if (sys >= 160 || dia >= 100) return { label: "Stage 2 Hypertension", color: "text-red-600", bg: "bg-red-50 border-red-200" };
+    if (sys >= 140 || dia >= 90) return { label: "Stage 1 Hypertension", color: "text-orange-600", bg: "bg-orange-50 border-orange-200" };
+    if ((sys >= 120 && sys <= 139) || (dia >= 80 && dia <= 89)) return { label: "Prehypertension", color: "text-yellow-600", bg: "bg-yellow-50 border-yellow-200" };
+    return { label: "Normal", color: "text-green-600", bg: "bg-green-50 border-green-200" };
+  };
+
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="mb-10 mt-6 max-w-2xl print-hide">
@@ -213,7 +227,40 @@ const PredictionForm = () => {
               
               <div className={`grid grid-cols-1 md:grid-cols-2 gap-5 ${activeTab === "basic" ? "block" : "hidden"}`}>
                 {renderRangeInput("Age", t("lbl_age"), "1", "120", "1", "Thn")}
-                {renderRangeInput("Blood_Pressure", t("lbl_bp"), "40", "300", "1", "mmHg")}
+                <div className="space-y-4 bg-white p-5 rounded-xl border border-gray-100 clinical-shadow">
+                  <div className="border-b border-gray-50 pb-2">
+                    <label className="text-sm font-bold text-gray-800">{t("lbl_bp") || "Tekanan Darah"}</label>
+                    <p className="text-[10px] text-gray-400 mt-1 leading-tight">
+                      Catatan: Model CKD menggunakan nilai tekanan darah diastolik (BP) sesuai atribut pada dataset UCI Chronic Kidney Disease.
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 pt-1">
+                    <div>
+                      <label className="text-xs text-gray-600 font-semibold mb-1 block">Systolic (mmHg)</label>
+                      <input 
+                        type="number" name="Systolic" min="70" max="250" 
+                        value={formData.Systolic} onChange={handleChange} placeholder="120" 
+                        className="w-full font-bold text-primary text-sm border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-stone-50" 
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-600 font-semibold mb-1 block">Diastolic (mmHg)</label>
+                      <input 
+                        type="number" name="Blood_Pressure" min="40" max="150" 
+                        value={formData.Blood_Pressure} onChange={handleChange} placeholder="80" 
+                        className="w-full font-bold text-primary text-sm border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-stone-50" 
+                      />
+                    </div>
+                  </div>
+
+                  {formData.Systolic && formData.Blood_Pressure && (
+                    <div className={`mt-3 px-3 py-2 rounded-md border ${getBpCategory()?.bg} flex flex-col xl:flex-row xl:items-center justify-between gap-1`}>
+                      <span className="text-xs font-semibold text-gray-600">Kategori Tekanan Darah:</span>
+                      <span className={`text-xs font-bold ${getBpCategory()?.color}`}>{getBpCategory()?.label}</span>
+                    </div>
+                  )}
+                </div>
                 {renderToggleInput("Hypertension", t("lbl_htn"), ["no", "yes"])}
                 {renderToggleInput("Diabetes_Mellitus", t("lbl_dm"), ["no", "yes"])}
                 {renderToggleInput("Coronary_Artery_Disease", t("lbl_cad"), ["no", "yes"])}
