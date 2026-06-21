@@ -186,7 +186,7 @@ const ResultCard = ({ result, formData, setActivePage }) => {
           </div>
         </div>
 
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="w-full flex flex-col gap-5 mb-8">
           {/* eGFR Card */}
           <div className="bg-stone-50 border border-stone-200 p-5 rounded-lg flex flex-col justify-center">
             <h3 className="text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">eGFR Estimation</h3>
