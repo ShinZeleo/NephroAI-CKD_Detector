@@ -49,8 +49,8 @@ const PredictionForm = ({ setActivePage }) => {
   const handleFillNormal = () => {
     setFormData({
       Age: "35",
-      Systolic: "120",
-      Blood_Pressure: "80",
+      Systolic: "115",
+      Blood_Pressure: "75",
       Specific_Gravity: "1.020",
       Albumin: "0.0",
       Sugar: "0.0",
@@ -59,7 +59,7 @@ const PredictionForm = ({ setActivePage }) => {
       Pus_Cell_clumps: "notpresent",
       Bacteria: "notpresent",
       Blood_Glucose_Random: "90",
-      Blood_Urea: "30",
+      Blood_Urea: "20",
       Serum_Creatinine: "0.8",
       Sodium: "140",
       Potassium: "4.0",
