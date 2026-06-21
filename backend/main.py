@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from ml_utils import predict_ckd
+from ml_utils import predict_ckd, predict_batch_ckd
 import pandas as pd
 import io
 
@@ -91,38 +91,34 @@ async def predict_batch(file: UploadFile = File(...)):
         contents = await file.read()
         df = pd.read_csv(io.StringIO(contents.decode('utf-8')))
         
+        # Map CSV columns to model features
+        rename_map = {
+            'Blood_Pressure': 'Blood Pressure',
+            'Specific_Gravity': 'Specific Gravity',
+            'Red_Blood_Cells': 'Red Blood Cells',
+            'Pus_Cell': 'Pus Cell',
+            'Pus_Cell_clumps': 'Pus Cell clumps',
+            'Blood_Glucose_Random': 'Blood Glucose Random',
+            'Blood_Urea': 'Blood Urea',
+            'Serum_Creatinine': 'Serum Creatinine',
+            'Packed_Cell_Volume': 'Packed Cell Volume',
+            'White_Blood_Cell_Count': 'White Blood Cell Count',
+            'Red_Blood_Cell_Count': 'Red Blood Cell Count',
+            'Diabetes_Mellitus': 'Diabetes Mellitus',
+            'Coronary_Artery_Disease': 'Coronary Artery Disease',
+            'Pedal_Edema': 'Pedal Edema'
+        }
+        df_for_model = df.rename(columns=rename_map)
+        
+        # Execute vectorized prediction
+        batch_preds = predict_batch_ckd(df_for_model)
+        
+        # Prepare dataframe for JSON response without NaN issues
+        df_json = df.where(pd.notnull(df), None)
+        
         results = []
-        for index, row in df.iterrows():
-            # Convert row to dictionary format expected by predict_ckd
-            patient_dict = {
-                'Age': row.get('Age'),
-                'Blood Pressure': row.get('Blood_Pressure', row.get('Blood Pressure')),
-                'Specific Gravity': row.get('Specific_Gravity', row.get('Specific Gravity')),
-                'Albumin': row.get('Albumin'),
-                'Sugar': row.get('Sugar'),
-                'Red Blood Cells': row.get('Red_Blood_Cells', row.get('Red Blood Cells')),
-                'Pus Cell': row.get('Pus_Cell', row.get('Pus Cell')),
-                'Pus Cell clumps': row.get('Pus_Cell_clumps', row.get('Pus Cell clumps')),
-                'Bacteria': row.get('Bacteria'),
-                'Blood Glucose Random': row.get('Blood_Glucose_Random', row.get('Blood Glucose Random')),
-                'Blood Urea': row.get('Blood_Urea', row.get('Blood Urea')),
-                'Serum Creatinine': row.get('Serum_Creatinine', row.get('Serum Creatinine')),
-                'Sodium': row.get('Sodium'),
-                'Potassium': row.get('Potassium'),
-                'Hemoglobin': row.get('Hemoglobin'),
-                'Packed Cell Volume': row.get('Packed_Cell_Volume', row.get('Packed Cell Volume')),
-                'White Blood Cell Count': row.get('White_Blood_Cell_Count', row.get('White Blood Cell Count')),
-                'Red Blood Cell Count': row.get('Red_Blood_Cell_Count', row.get('Red Blood Cell Count')),
-                'Hypertension': row.get('Hypertension'),
-                'Diabetes Mellitus': row.get('Diabetes_Mellitus', row.get('Diabetes Mellitus')),
-                'Coronary Artery Disease': row.get('Coronary_Artery_Disease', row.get('Coronary Artery Disease')),
-                'Appetite': row.get('Appetite'),
-                'Pedal Edema': row.get('Pedal_Edema', row.get('Pedal Edema')),
-                'Anemia': row.get('Anemia')
-            }
-            
-            # Predict
-            pred = predict_ckd(patient_dict, include_shap=False)
+        for index, row in df_json.iterrows():
+            pred = batch_preds[index]
             
             results.append({
                 "id": str(row.get('id', index + 1)),

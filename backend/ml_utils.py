@@ -185,3 +185,66 @@ def predict_ckd(patient_data: dict, include_shap: bool = True):
         "egfr": float(egfr_val) if egfr_val is not None else None,
         "bun_cr_ratio": float(bun_cr_ratio) if bun_cr_ratio is not None else None
     }
+
+def predict_batch_ckd(df: pd.DataFrame):
+    """
+    Perform fully vectorized predictions on a pandas DataFrame.
+    Bypasses row-by-row overhead and SHAP calculations for maximum speed.
+    """
+    df_processed = df.copy()
+    
+    mappings = {
+        'Red Blood Cells'        : {'normal': 1, 'abnormal': 0},
+        'Pus Cell'               : {'normal': 1, 'abnormal': 0},
+        'Pus Cell clumps'        : {'present': 1, 'notpresent': 0},
+        'Bacteria'               : {'present': 1, 'notpresent': 0},
+        'Hypertension'           : {'yes': 1, 'no': 0},
+        'Diabetes Mellitus'      : {'yes': 1, 'no': 0},
+        'Coronary Artery Disease': {'yes': 1, 'no': 0},
+        'Appetite'               : {'good': 1, 'poor': 0},
+        'Pedal Edema'            : {'yes': 1, 'no': 0},
+        'Anemia'                 : {'yes': 1, 'no': 0}
+    }
+    
+    for col, m in mappings.items():
+        if col in df_processed.columns:
+            df_processed[col] = df_processed[col].apply(lambda x: m.get(str(x).strip().lower(), x) if pd.notnull(x) else x)
+            
+    for col in BASE_FEATURES:
+        if col not in df_processed.columns:
+            df_processed[col] = np.nan
+            
+    df_base = df_processed[BASE_FEATURES].copy()
+    for col in df_base.columns:
+        df_base[col] = pd.to_numeric(df_base[col], errors='coerce')
+    
+    # Vectorized MICE Imputation for all rows simultaneously
+    df_imp = pd.DataFrame(
+        mice_imputer.transform(df_base),
+        columns=BASE_FEATURES, 
+        index=df_base.index
+    )
+    
+    for col in BASE_BINARY:
+        if col in df_imp.columns:
+            df_imp[col] = np.clip(np.round(df_imp[col]), 0, 1).astype(int)
+            
+    # Vectorized Feature Engineering
+    df_fe = apply_feature_engineering(df_imp)
+    df_controlled = df_fe.drop(columns=[c for c in ALL_DROPPED if c in df_fe.columns])
+    
+    # Vectorized Probability Prediction
+    probs = model_pipeline.predict_proba(df_controlled)[:, 1]
+    
+    threshold = 0.3
+    preds = (probs >= threshold).astype(int)
+    
+    results = []
+    for i in range(len(probs)):
+        results.append({
+            "prediction": int(preds[i]),
+            "probability": float(probs[i]),
+            "is_ckd": bool(preds[i] == 1)
+        })
+        
+    return results
