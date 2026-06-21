@@ -151,6 +151,12 @@ const BatchPrediction = () => {
               ) : t('batch_start_btn')}
             </button>
 
+            {file && !loading && !error && (
+              <p className="text-center text-[10px] text-gray-500 mt-3 font-medium">
+                {t('batch_est_time')}
+              </p>
+            )}
+
             {/* CSV Info Card */}
             <div className="mt-8 bg-stone-50 border border-stone-200 rounded-lg p-5 flex-shrink-0">
               <h3 className="text-sm font-bold text-gray-800 mb-2 flex items-center">
