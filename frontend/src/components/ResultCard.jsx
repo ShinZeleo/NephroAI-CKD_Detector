@@ -144,67 +144,65 @@ const ResultCard = ({ result, formData, setActivePage }) => {
           <h2 className="font-serif font-bold text-lg text-primary tracking-wide uppercase">Clinical Report</h2>
           <span className="text-xs text-gray-400 font-mono">ID: #{Math.floor(Math.random() * 90000) + 10000}</span>
         </div>
-
-        <div className="flex flex-col sm:flex-row items-center sm:items-start w-full gap-6 sm:gap-8 mb-8 border-b border-gray-50 pb-8">
-          <div className="relative w-32 h-32 sm:w-40 sm:h-40 flex-shrink-0">
+        <div className="flex flex-col md:flex-row items-center md:items-start w-full gap-5 mb-8 border-b border-gray-50 pb-8">
+          <div className="relative w-28 h-28 flex-shrink-0 mt-1">
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 140 140">
-              <circle cx="70" cy="70" r={radius} fill="transparent" stroke="#f5f5f4" strokeWidth="8" />
-              <circle cx="70" cy="70" r={radius} fill="transparent" stroke={strokeColor} strokeWidth="8" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="square" className="transition-all duration-1000 ease-out" />
+              <circle cx="70" cy="70" r={radius} fill="transparent" stroke="#f5f5f4" strokeWidth="10" />
+              <circle cx="70" cy="70" r={radius} fill="transparent" stroke={strokeColor} strokeWidth="10" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round" className="transition-all duration-1000 ease-out" />
             </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className={`text-3xl font-serif font-bold ${strokeColor === '#dc2626' ? 'text-red-600' : (strokeColor === '#f97316' ? 'text-orange-500' : 'text-teal-600')}`}>
+            <div className="absolute inset-0 flex flex-col items-center justify-center mt-0.5">
+              <span className={`text-2xl font-serif font-bold ${strokeColor === '#dc2626' ? 'text-red-600' : (strokeColor === '#f97316' ? 'text-orange-500' : 'text-teal-600')}`}>
                 {probabilityPercent.toFixed(1)}%
               </span>
-              <span className="text-[9px] text-gray-400 font-semibold uppercase tracking-widest mt-1">Probability</span>
+              <span className="text-[8px] text-gray-400 font-bold uppercase tracking-widest">Prob</span>
             </div>
           </div>
           
-          <div className="flex-1 w-full text-center sm:text-left mt-2 sm:mt-0">
-            <h2 className={`text-3xl font-serif font-bold mb-1 ${strokeColor === '#dc2626' ? 'text-red-700' : (strokeColor === '#f97316' ? 'text-orange-600' : 'text-teal-700')}`}>
+          <div className="flex-1 w-full text-center md:text-left">
+            <h2 className={`text-2xl font-serif font-bold mb-1.5 ${strokeColor === '#dc2626' ? 'text-red-700' : (strokeColor === '#f97316' ? 'text-orange-600' : 'text-teal-700')}`}>
               Risiko CKD {riskCategory}
             </h2>
-            <p className="text-gray-600 text-sm font-medium mb-4">
+            <p className="text-gray-600 text-[13px] font-medium mb-3">
               Prediksi Saat Ini: <span className="font-bold">{isCKD ? 'Terindikasi CKD' : 'Tidak Terindikasi CKD'}</span>
             </p>
-            
-            <div className="flex flex-wrap gap-2 justify-center sm:justify-start mb-5 print-hide">
-               <span className="px-2.5 py-1 bg-stone-100 text-stone-600 text-xs rounded-md font-medium border border-stone-200">
-                 Confidence: <strong className="text-stone-800">{confidenceStr}</strong>
+            <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-4 print-hide">
+               <span className="px-2 py-1 bg-stone-100 text-stone-600 text-[11px] rounded font-medium border border-stone-200">
+                 Conf: <strong className="text-stone-800">{confidenceStr}</strong>
                </span>
-               <span className="px-2.5 py-1 bg-stone-100 text-stone-600 text-xs rounded-md font-medium border border-stone-200">
-                 Threshold: <strong>{result.threshold_used}</strong>
+               <span className="px-2 py-1 bg-stone-100 text-stone-600 text-[11px] rounded font-medium border border-stone-200">
+                 Thresh: <strong>{result.threshold_used}</strong>
                </span>
             </div>
 
-            <div className="bg-blue-50/50 border border-blue-100 p-4 rounded-md">
-              <h3 className="text-xs font-bold text-blue-800 mb-1.5 uppercase tracking-wider">Ringkasan Klinis</h3>
-              <p className="text-xs text-blue-900 leading-relaxed">
-                Pasien berusia {formData?.Age || '-'} tahun dengan kondisi <strong>{egfrCategory.toLowerCase()}</strong> {result.egfr ? `(eGFR: ${result.egfr.toFixed(1)})` : ''}. 
-                Berdasarkan analisis parameter klinis secara keseluruhan, risiko terjadinya Chronic Kidney Disease (CKD) saat ini tergolong <strong>{riskCategory.toLowerCase()}</strong>.
+            <div className="bg-blue-50/60 border border-blue-100 p-3.5 rounded-lg text-left w-full">
+              <h3 className="text-[11px] font-bold text-blue-800 mb-1 uppercase tracking-wider">Ringkasan Klinis</h3>
+              <p className="text-[13px] text-blue-900/90 leading-relaxed">
+                Pasien usia {formData?.Age || '-'} thn dgn kondisi <strong>{egfrCategory.toLowerCase()}</strong> {result.egfr ? `(eGFR: ${result.egfr.toFixed(1)})` : ''}. Risiko saat ini tergolong <strong>{riskCategory.toLowerCase()}</strong>.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="w-full grid grid-cols-2 gap-4 mb-8">
           {/* eGFR Card */}
-          <div className="bg-stone-50 border border-stone-200 p-5 rounded-lg flex flex-col justify-center">
-            <h3 className="text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">eGFR Estimation</h3>
-            <div className="flex items-end gap-2 mb-2">
-              <span className="text-3xl font-serif font-black text-gray-800">{result.egfr ? result.egfr.toFixed(1) : 'N/A'}</span>
-              <span className="text-sm font-medium text-gray-500 mb-1">mL/min/1.73m²</span>
+          <div className="bg-stone-50 border border-stone-200 p-4 rounded-xl flex flex-col justify-center">
+            <h3 className="text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-wider">eGFR Est.</h3>
+            <div className="flex flex-col mb-2">
+              <span className="text-3xl font-serif font-black text-gray-800 leading-none">{result.egfr ? result.egfr.toFixed(1) : 'N/A'}</span>
+              <span className="text-[10px] font-medium text-gray-400 mt-1">mL/min/1.73m²</span>
             </div>
-            <p className={`text-sm font-bold ${egfrColor}`}>{egfrCategory}</p>
+            <p className={`text-xs font-bold leading-tight ${egfrColor}`}>{egfrCategory}</p>
           </div>
 
           {/* BUN/Cr Ratio Card */}
-          <div className="bg-stone-50 border border-stone-200 p-5 rounded-lg flex flex-col justify-center">
-            <h3 className="text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">BUN/Creatinine Ratio</h3>
-            <div className="flex items-end gap-2 mb-2">
-              <span className="text-3xl font-serif font-black text-gray-800">{result.bun_cr_ratio ? result.bun_cr_ratio.toFixed(1) : 'N/A'}</span>
+          <div className="bg-stone-50 border border-stone-200 p-4 rounded-xl flex flex-col justify-center">
+            <h3 className="text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-wider">BUN/Cr Ratio</h3>
+            <div className="flex flex-col mb-2">
+              <span className="text-3xl font-serif font-black text-gray-800 leading-none">{result.bun_cr_ratio ? result.bun_cr_ratio.toFixed(1) : 'N/A'}</span>
+              <span className="text-[10px] font-medium text-gray-400 mt-1">Ratio</span>
             </div>
-            <p className="text-sm font-medium text-gray-500">
-              {result.bun_cr_ratio && result.bun_cr_ratio > 20 ? 'Kemungkinan Dehidrasi / Pre-renal' : 'Rasio Normal'}
+            <p className="text-[11px] font-medium text-gray-500 leading-tight">
+              {result.bun_cr_ratio && result.bun_cr_ratio > 20 ? 'Risiko Dehidrasi / Pre-renal' : 'Rasio Normal'}
             </p>
           </div>
         </div>
