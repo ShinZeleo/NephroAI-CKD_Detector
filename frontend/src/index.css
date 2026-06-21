@@ -64,17 +64,19 @@ input[type=range]::-webkit-slider-runnable-track {
 /* Native Print Styles */
 @media print {
   @page {
-    size: portrait;
-    margin: 0.5cm;
+    size: A4 portrait;
+    margin: 1.5cm;
   }
   
   body {
     background-color: white !important;
     margin: 0;
     padding: 0;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  nav, footer, .print-hide {
+  nav, footer, .print-hide, .btn-print-hide {
     display: none !important;
   }
 
@@ -95,5 +97,17 @@ input[type=range]::-webkit-slider-runnable-track {
     box-shadow: none !important;
     border: none !important;
     margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .clinical-shadow {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+  }
+  
+  /* Prevent page breaks inside cards */
+  .break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 }

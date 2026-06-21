@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Upload, FileType, AlertCircle, CheckCircle, Activity, Users, Download, Search, X } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
 
 const BatchPrediction = () => {
   const { t } = useTranslation();
@@ -219,7 +219,7 @@ const BatchPrediction = () => {
             <div className="bg-white p-8 border border-gray-200 clinical-shadow">
               <h2 className="text-lg font-bold text-gray-800 mb-6 uppercase tracking-wider">{t('batch_summary')}</h2>
               
-              <div className="grid grid-cols-3 gap-4 mb-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 <div className="p-4 bg-stone-50 border border-stone-100 rounded-md text-center">
                   <Users className="w-6 h-6 text-gray-400 mx-auto mb-2" />
                   <p className="text-3xl font-serif font-black text-gray-800">{results.summary.total}</p>
@@ -228,12 +228,67 @@ const BatchPrediction = () => {
                 <div className="p-4 bg-red-50 border border-red-100 rounded-md text-center">
                   <Activity className="w-6 h-6 text-red-400 mx-auto mb-2" />
                   <p className="text-3xl font-serif font-black text-red-600">{results.summary.high_risk}</p>
-                  <p className="text-[10px] font-bold text-red-600 uppercase tracking-widest mt-1">{t('batch_high_risk')}</p>
+                  <p className="text-[10px] font-bold text-red-600 uppercase tracking-widest mt-1">Risiko Tinggi</p>
+                </div>
+                <div className="p-4 bg-orange-50 border border-orange-100 rounded-md text-center">
+                  <Activity className="w-6 h-6 text-orange-400 mx-auto mb-2" />
+                  <p className="text-3xl font-serif font-black text-orange-600">{results.summary.medium_risk}</p>
+                  <p className="text-[10px] font-bold text-orange-600 uppercase tracking-widest mt-1">Risiko Sedang</p>
                 </div>
                 <div className="p-4 bg-green-50 border border-green-100 rounded-md text-center">
                   <CheckCircle className="w-6 h-6 text-green-500 mx-auto mb-2" />
                   <p className="text-3xl font-serif font-black text-green-600">{results.summary.low_risk}</p>
-                  <p className="text-[10px] font-bold text-green-600 uppercase tracking-widest mt-1">{t('batch_low_risk')}</p>
+                  <p className="text-[10px] font-bold text-green-600 uppercase tracking-widest mt-1">Risiko Rendah</p>
+                </div>
+              </div>
+
+              <div className="bg-stone-50 border border-stone-100 rounded-lg p-6 mb-8 flex flex-col md:flex-row items-center gap-8">
+                <div className="w-full md:w-1/2 h-[250px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: 'Risiko Tinggi', value: results.summary.high_risk, color: '#dc2626' },
+                          { name: 'Risiko Sedang', value: results.summary.medium_risk, color: '#f97316' },
+                          { name: 'Risiko Rendah', value: results.summary.low_risk, color: '#0d9488' }
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={90}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {
+                          [
+                            { name: 'Risiko Tinggi', value: results.summary.high_risk, color: '#dc2626' },
+                            { name: 'Risiko Sedang', value: results.summary.medium_risk, color: '#f97316' },
+                            { name: 'Risiko Rendah', value: results.summary.low_risk, color: '#0d9488' }
+                          ].map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))
+                        }
+                      </Pie>
+                      <Tooltip formatter={(value) => [`${value} Pasien`, 'Jumlah']} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="w-full md:w-1/2">
+                  <h3 className="text-sm font-bold text-gray-800 mb-4">Distribusi Risiko</h3>
+                  <ul className="space-y-3">
+                    <li className="flex items-center justify-between text-sm">
+                      <span className="flex items-center text-gray-600"><span className="w-3 h-3 rounded-full bg-red-600 mr-2"></span> Risiko Tinggi (&gt;60%)</span>
+                      <span className="font-bold text-gray-800">{((results.summary.high_risk / results.summary.total) * 100).toFixed(1)}%</span>
+                    </li>
+                    <li className="flex items-center justify-between text-sm">
+                      <span className="flex items-center text-gray-600"><span className="w-3 h-3 rounded-full bg-orange-500 mr-2"></span> Risiko Sedang (30-60%)</span>
+                      <span className="font-bold text-gray-800">{((results.summary.medium_risk / results.summary.total) * 100).toFixed(1)}%</span>
+                    </li>
+                    <li className="flex items-center justify-between text-sm">
+                      <span className="flex items-center text-gray-600"><span className="w-3 h-3 rounded-full bg-teal-600 mr-2"></span> Risiko Rendah (0-30%)</span>
+                      <span className="font-bold text-gray-800">{((results.summary.low_risk / results.summary.total) * 100).toFixed(1)}%</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
 
@@ -253,9 +308,13 @@ const BatchPrediction = () => {
                         <td className="px-4 py-3 font-mono text-gray-600">#{row.id}</td>
                         <td className="px-4 py-3 font-bold text-gray-800">{(row.probability * 100).toFixed(1)}%</td>
                         <td className="px-4 py-3">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${row.is_ckd ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
-                            {row.is_ckd ? t('batch_high_risk') : t('batch_low_risk')}
-                          </span>
+                          {row.probability > 0.6 ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-800">Risiko Tinggi</span>
+                          ) : row.probability >= 0.3 ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-orange-100 text-orange-800">Risiko Sedang</span>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-teal-100 text-teal-800">Risiko Rendah</span>
+                          )}
                         </td>
                         <td className="px-4 py-3 text-right">
                           <button 

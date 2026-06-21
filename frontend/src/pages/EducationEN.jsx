@@ -15,6 +15,29 @@ const EducationEN = () => {
         </p>
       </div>
 
+      {/* Quick Facts */}
+      <div className="mb-12 bg-blue-50 border border-blue-100 rounded-xl p-8">
+        <h2 className="text-2xl font-bold text-blue-900 mb-6">Quick Facts: CKD at a Glance</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white p-5 rounded-lg border border-blue-50 shadow-sm">
+            <h3 className="text-sm font-bold text-blue-800 uppercase tracking-wider mb-2">Prevalence</h3>
+            <p className="text-gray-700 text-sm">Estimated 1 in 10 adults worldwide have CKD, and most don't know it.</p>
+          </div>
+          <div className="bg-white p-5 rounded-lg border border-blue-50 shadow-sm">
+            <h3 className="text-sm font-bold text-blue-800 uppercase tracking-wider mb-2">Early Symptoms</h3>
+            <p className="text-gray-700 text-sm">Early stages are mostly asymptomatic. Physical symptoms only appear when kidney function drops significantly.</p>
+          </div>
+          <div className="bg-white p-5 rounded-lg border border-blue-50 shadow-sm">
+            <h3 className="text-sm font-bold text-blue-800 uppercase tracking-wider mb-2">Risk Factors</h3>
+            <p className="text-gray-700 text-sm">Diabetes Mellitus and Hypertension are the two most dominant causes, accounting for the vast majority of cases.</p>
+          </div>
+          <div className="bg-white p-5 rounded-lg border border-blue-50 shadow-sm">
+            <h3 className="text-sm font-bold text-blue-800 uppercase tracking-wider mb-2">When to Check?</h3>
+            <p className="text-gray-700 text-sm">If you have diabetes, high blood pressure, or a family history of kidney failure, check eGFR at least once a year.</p>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
         
         {/* Left Column (Main Content - 3 columns wide) */}

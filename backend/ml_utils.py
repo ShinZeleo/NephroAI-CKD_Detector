@@ -173,11 +173,15 @@ def predict_ckd(patient_data: dict, include_shap: bool = True):
         except Exception as e:
             print(f"SHAP explanation failed: {e}")
             shap_data = []
+    egfr_val = df_fe['eGFR'].iloc[0] if 'eGFR' in df_fe.columns else None
+    bun_cr_ratio = df_fe['BUN_Creatinine_Ratio'].iloc[0] if 'BUN_Creatinine_Ratio' in df_fe.columns else None
     
     return {
         "prediction": prediction,
         "probability": float(prob),
         "threshold_used": threshold,
         "is_ckd": bool(prediction == 1),
-        "shap_values": shap_data
+        "shap_values": shap_data,
+        "egfr": float(egfr_val) if egfr_val is not None else None,
+        "bun_cr_ratio": float(bun_cr_ratio) if bun_cr_ratio is not None else None
     }

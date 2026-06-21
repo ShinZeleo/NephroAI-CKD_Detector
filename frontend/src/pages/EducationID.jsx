@@ -15,6 +15,29 @@ const EducationID = () => {
         </p>
       </div>
 
+      {/* Quick Facts */}
+      <div className="mb-12 bg-blue-50 border border-blue-100 rounded-xl p-8">
+        <h2 className="text-2xl font-bold text-blue-900 mb-6">Quick Facts: Sekilas tentang CKD</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white p-5 rounded-lg border border-blue-50 shadow-sm">
+            <h3 className="text-sm font-bold text-blue-800 uppercase tracking-wider mb-2">Prevalensi</h3>
+            <p className="text-gray-700 text-sm">Diperkirakan 1 dari 10 orang dewasa di seluruh dunia mengalami CKD, seringkali tidak menyadarinya.</p>
+          </div>
+          <div className="bg-white p-5 rounded-lg border border-blue-50 shadow-sm">
+            <h3 className="text-sm font-bold text-blue-800 uppercase tracking-wider mb-2">Gejala Awal</h3>
+            <p className="text-gray-700 text-sm">Fase awal umumnya tanpa gejala (asimtomatik). Gejala fisik baru muncul saat fungsi ginjal sudah sangat menurun.</p>
+          </div>
+          <div className="bg-white p-5 rounded-lg border border-blue-50 shadow-sm">
+            <h3 className="text-sm font-bold text-blue-800 uppercase tracking-wider mb-2">Faktor Risiko</h3>
+            <p className="text-gray-700 text-sm">Diabetes Mellitus dan Hipertensi adalah dua penyebab paling dominan dan menyumbang mayoritas kasus CKD.</p>
+          </div>
+          <div className="bg-white p-5 rounded-lg border border-blue-50 shadow-sm">
+            <h3 className="text-sm font-bold text-blue-800 uppercase tracking-wider mb-2">Kapan Periksa?</h3>
+            <p className="text-gray-700 text-sm">Jika Anda penderita diabetes, hipertensi, atau riwayat keluarga sakit ginjal, periksa eGFR minimal 1x setahun.</p>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
         
         {/* Left Column (Main Content - 3 columns wide) */}

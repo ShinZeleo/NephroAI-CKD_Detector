@@ -5,130 +5,209 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 
 const ResultCard = ({ result, formData }) => {
   const { t } = useTranslation();
   const reportRef = useRef();
-  const [isDownloading, setIsDownloading] = useState(false);
 
   if (!result) return null;
 
   const isCKD = result.is_ckd;
-  const confidence = (result.probability * 100).toFixed(1);
-  const colorClass = isCKD ? 'text-red-500' : 'text-green-500';
-  const bgClass = isCKD ? 'bg-red-50' : 'bg-green-50';
-  const strokeColor = isCKD ? '#dc2626' : '#0d9488'; // Red-600 vs Teal-600
+  const probabilityPercent = result.probability * 100;
+  const confidenceStr = (probabilityPercent > 80 || probabilityPercent < 15) ? "Tinggi" : (probabilityPercent > 60 || probabilityPercent < 25 ? "Sedang" : "Rendah");
+  
+  let riskCategory = "Rendah";
+  if (probabilityPercent > 60) riskCategory = "Tinggi";
+  else if (probabilityPercent >= 30) riskCategory = "Sedang";
+
+  const colorClass = riskCategory === 'Tinggi' ? 'text-red-500' : (riskCategory === 'Sedang' ? 'text-orange-500' : 'text-green-500');
+  const bgClass = riskCategory === 'Tinggi' ? 'bg-red-50' : (riskCategory === 'Sedang' ? 'bg-orange-50' : 'bg-green-50');
+  const strokeColor = riskCategory === 'Tinggi' ? '#dc2626' : (riskCategory === 'Sedang' ? '#f97316' : '#0d9488'); 
 
   const handleDownloadPdf = () => {
     window.print();
   };
 
-  // SVG Gauge Calculations
   const radius = 60;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (result.probability * circumference);
 
-  // Determine Critical Factors
+  // eGFR Category
+  let egfrCategory = "Normal Kidney Function";
+  let egfrColor = "text-green-600";
+  if (result.egfr) {
+    if (result.egfr >= 90) { egfrCategory = "Fungsi Ginjal Normal"; egfrColor = "text-green-600"; }
+    else if (result.egfr >= 60) { egfrCategory = "Penurunan Ringan"; egfrColor = "text-yellow-600"; }
+    else if (result.egfr >= 45) { egfrCategory = "Penurunan Ringan-Sedang"; egfrColor = "text-orange-500"; }
+    else if (result.egfr >= 30) { egfrCategory = "Penurunan Sedang-Berat"; egfrColor = "text-orange-600"; }
+    else if (result.egfr >= 15) { egfrCategory = "Penurunan Berat"; egfrColor = "text-red-500"; }
+    else { egfrCategory = "Gagal Ginjal"; egfrColor = "text-red-700"; }
+  }
+
   const criticalFactors = [];
-  if (isCKD && formData) {
+  if (formData) {
     if (parseFloat(formData.Systolic) >= 140 || parseFloat(formData.Blood_Pressure) >= 90) criticalFactors.push({ name: 'Tekanan Darah Tinggi', val: formData.Systolic ? `${formData.Systolic}/${formData.Blood_Pressure} mmHg` : `${formData.Blood_Pressure} mmHg` });
     if (parseFloat(formData.Serum_Creatinine) > 1.2) criticalFactors.push({ name: 'Kreatinin Abnormal', val: `${formData.Serum_Creatinine} mg/dL` });
     if (parseFloat(formData.Blood_Glucose_Random) > 200) criticalFactors.push({ name: 'Gula Darah Tinggi', val: `${formData.Blood_Glucose_Random} mg/dL` });
     if (parseFloat(formData.Hemoglobin) < 12) criticalFactors.push({ name: 'Indikasi Anemia', val: `${formData.Hemoglobin} g/dL` });
-    if (formData.Hypertension === 'yes') criticalFactors.push({ name: 'Riwayat Hipertensi', val: 'Ya' });
-    if (formData.Diabetes_Mellitus === 'yes') criticalFactors.push({ name: 'Riwayat Diabetes', val: 'Ya' });
   }
+
+  const CustomShapTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      const val = data.value;
+      const feat = data.feature;
+      const impact = val > 0 ? "meningkatkan" : "menurunkan";
+      const insight = `Nilai ${feat} pasien saat ini berkontribusi ${impact} risiko CKD.`;
+      
+      return (
+        <div className="bg-white p-3 border border-gray-200 shadow-lg rounded-md max-w-xs z-50">
+          <p className="font-bold text-gray-800 text-xs mb-1">{feat}</p>
+          <p className="text-[10px] text-gray-600 leading-relaxed">{insight}</p>
+          <p className={`text-[10px] font-mono mt-2 font-bold ${val > 0 ? 'text-red-600' : 'text-green-600'}`}>
+            SHAP Value: {val.toFixed(3)}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="flex flex-col gap-4">
-      <div id="printable-report" className={`mt-0 bg-white border border-gray-200 clinical-shadow p-6 md:p-8 ${isCKD ? 'border-t-4 border-t-red-600' : 'border-t-4 border-t-teal-600'}`}>
+      <div id="printable-report" className={`mt-0 bg-white border border-gray-200 clinical-shadow p-6 md:p-8 ${riskCategory === 'Tinggi' ? 'border-t-4 border-t-red-600' : (riskCategory === 'Sedang' ? 'border-t-4 border-t-orange-500' : 'border-t-4 border-t-teal-600')}`}>
         
         <div className="border-b border-gray-100 pb-4 mb-6 flex justify-between items-center">
           <h2 className="font-serif font-bold text-lg text-primary tracking-wide uppercase">Clinical Report</h2>
           <span className="text-xs text-gray-400 font-mono">ID: #{Math.floor(Math.random() * 90000) + 10000}</span>
         </div>
 
-      <div className="flex flex-col items-center text-center w-full mb-8">
-        <div className="relative w-40 h-40 mb-6">
-          <svg className="w-full h-full transform -rotate-90" viewBox="0 0 140 140">
-            <circle cx="70" cy="70" r={radius} fill="transparent" stroke="#f5f5f4" strokeWidth="8" />
-            <circle cx="70" cy="70" r={radius} fill="transparent" stroke={strokeColor} strokeWidth="8" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="square" className="transition-all duration-1000 ease-out" />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className={`text-4xl font-serif font-bold ${isCKD ? 'text-red-600' : 'text-teal-600'}`}>{confidence}%</span>
-            <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mt-1">Probability</span>
-          </div>
-        </div>
-        
-        <h2 className={`text-2xl font-serif font-bold mb-2 ${isCKD ? 'text-red-700' : 'text-teal-700'}`}>
-          {isCKD ? 'CKD Detected' : 'No CKD Detected'}
-        </h2>
-        <p className="text-gray-500 text-xs max-w-[200px] leading-relaxed">
-          Random Forest Analysis • Threshold: {result.threshold_used}
-        </p>
-      </div>
-
-      <div className="w-full space-y-6">
-        <div className="bg-stone-50 p-5 rounded-md border border-stone-100">
-          <h3 className="text-sm font-bold text-primary mb-3 uppercase tracking-wider">Recommendations</h3>
-          <ul className="space-y-3 text-sm text-gray-600 leading-relaxed">
-            {isCKD ? (
-              <>
-                <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_1', 'Rujuk ke Dokter Spesialis Penyakit Dalam Konsultan Ginjal Hipertensi (Sp.PD-KGH) segera.')}</li>
-                <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_2', 'Lakukan tes lab lengkap (Ureum, Kreatinin, Urinalisis).')}</li>
-                <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_3', 'Pantau ketat tekanan darah harian pasien.')}</li>
-              </>
-            ) : (
-              <>
-                <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_1', 'Pertahankan diet seimbang dan gaya hidup aktif.')}</li>
-                <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_2', 'Minum air putih yang cukup setiap hari.')}</li>
-                <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_3', 'Lakukan general check-up tahunan secara rutin.')}</li>
-              </>
-            )}
-          </ul>
-        </div>
-
-        {isCKD && criticalFactors.length > 0 && (
-          <div className="border border-red-100 p-5 rounded-md">
-            <h3 className="text-xs font-bold text-red-700 mb-3 uppercase tracking-wider">Critical Parameters</h3>
-            <div className="grid grid-cols-2 gap-3">
-              {criticalFactors.slice(0, 4).map((factor, idx) => (
-                <div key={idx} className="bg-red-50/50 p-2 rounded border border-red-50">
-                  <p className="text-[10px] text-gray-500 font-medium uppercase">{factor.name}</p>
-                  <p className="text-sm font-bold text-red-700">{factor.val}</p>
-                </div>
-              ))}
+        <div className="flex flex-col md:flex-row items-center gap-8 mb-8 border-b border-gray-50 pb-8">
+          <div className="relative w-40 h-40 flex-shrink-0">
+            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r={radius} fill="transparent" stroke="#f5f5f4" strokeWidth="8" />
+              <circle cx="70" cy="70" r={radius} fill="transparent" stroke={strokeColor} strokeWidth="8" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="square" className="transition-all duration-1000 ease-out" />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className={`text-3xl font-serif font-bold ${strokeColor === '#dc2626' ? 'text-red-600' : (strokeColor === '#f97316' ? 'text-orange-500' : 'text-teal-600')}`}>
+                {probabilityPercent.toFixed(1)}%
+              </span>
+              <span className="text-[9px] text-gray-400 font-semibold uppercase tracking-widest mt-1">Probability</span>
             </div>
           </div>
-        )}
-        {result.shap_values && result.shap_values.length > 0 && (
-          <div className="border border-gray-100 p-5 rounded-md mt-6">
-            <h3 className="text-xs font-bold text-gray-700 mb-4 uppercase tracking-wider">{t('risk_factors')} (AI Analysis)</h3>
-            <div className="h-[280px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart 
-                  data={result.shap_values.map(item => ({...item, feature: item.feature.replace(/_/g, ' ')}))} 
-                  layout="vertical" 
-                  margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
-                >
-                  <XAxis type="number" hide />
-                  <YAxis dataKey="feature" type="category" width={140} tick={{ fontSize: 11, fill: '#4b5563', fontWeight: 500 }} axisLine={false} tickLine={false} />
-                  <Tooltip formatter={(val) => val.toFixed(3)} labelStyle={{ color: '#1f2937', fontWeight: 'bold' }} />
-                  <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                    {result.shap_values.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.value > 0 ? '#ef4444' : '#10b981'} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+          
+          <div className="flex-1 text-center md:text-left">
+            <h2 className={`text-3xl font-serif font-bold mb-1 ${strokeColor === '#dc2626' ? 'text-red-700' : (strokeColor === '#f97316' ? 'text-orange-600' : 'text-teal-700')}`}>
+              Risiko CKD {riskCategory}
+            </h2>
+            <p className="text-gray-600 text-sm font-medium mb-3">
+              Prediksi Saat Ini: <span className="font-bold">{isCKD ? 'Terindikasi CKD' : 'Tidak Terindikasi CKD'}</span>
+            </p>
+            
+            <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-4 print-hide">
+               <span className="px-2.5 py-1 bg-stone-100 text-stone-600 text-xs rounded-md font-medium border border-stone-200">
+                 Confidence: <strong className="text-stone-800">{confidenceStr}</strong>
+               </span>
+               <span className="px-2.5 py-1 bg-stone-100 text-stone-600 text-xs rounded-md font-medium border border-stone-200">
+                 Threshold: <strong>{result.threshold_used}</strong>
+               </span>
             </div>
-            <p className="text-[10px] text-gray-400 mt-2 text-center">Merah: Meningkatkan Risiko CKD | Hijau: Menurunkan Risiko CKD</p>
+
+            <div className="bg-blue-50/50 border border-blue-100 p-4 rounded-md">
+              <h3 className="text-xs font-bold text-blue-800 mb-1 uppercase tracking-wider">Ringkasan Klinis</h3>
+              <p className="text-xs text-blue-900 leading-relaxed">
+                Pasien berusia {formData?.Age || '-'} tahun dengan estimasi fungsi ginjal {egfrCategory.toLowerCase()} {result.egfr ? `(eGFR: ${result.egfr.toFixed(1)})` : ''}. 
+                Berdasarkan analisis parameter klinis secara keseluruhan, risiko terjadinya Chronic Kidney Disease (CKD) saat ini tergolong <strong>{riskCategory.toLowerCase()}</strong>.
+              </p>
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* eGFR Card */}
+          <div className="bg-stone-50 border border-stone-200 p-5 rounded-lg flex flex-col justify-center">
+            <h3 className="text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">eGFR Estimation</h3>
+            <div className="flex items-end gap-2 mb-2">
+              <span className="text-3xl font-serif font-black text-gray-800">{result.egfr ? result.egfr.toFixed(1) : 'N/A'}</span>
+              <span className="text-sm font-medium text-gray-500 mb-1">mL/min/1.73m²</span>
+            </div>
+            <p className={`text-sm font-bold ${egfrColor}`}>{egfrCategory}</p>
+          </div>
+
+          {/* BUN/Cr Ratio Card */}
+          <div className="bg-stone-50 border border-stone-200 p-5 rounded-lg flex flex-col justify-center">
+            <h3 className="text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">BUN/Creatinine Ratio</h3>
+            <div className="flex items-end gap-2 mb-2">
+              <span className="text-3xl font-serif font-black text-gray-800">{result.bun_cr_ratio ? result.bun_cr_ratio.toFixed(1) : 'N/A'}</span>
+            </div>
+            <p className="text-sm font-medium text-gray-500">
+              {result.bun_cr_ratio && result.bun_cr_ratio > 20 ? 'Kemungkinan Dehidrasi / Pre-renal' : 'Rasio Normal'}
+            </p>
+          </div>
+        </div>
+
+        <div className="w-full space-y-6">
+          <div className="bg-stone-50 p-5 rounded-md border border-stone-100">
+            <h3 className="text-sm font-bold text-primary mb-3 uppercase tracking-wider">Recommendations</h3>
+            <ul className="space-y-3 text-sm text-gray-600 leading-relaxed">
+              {isCKD ? (
+                <>
+                  <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_1', 'Rujuk ke Dokter Spesialis Penyakit Dalam Konsultan Ginjal Hipertensi (Sp.PD-KGH) segera.')}</li>
+                  <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_2', 'Lakukan tes lab lengkap (Ureum, Kreatinin, Urinalisis).')}</li>
+                  <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_3', 'Pantau ketat tekanan darah harian pasien.')}</li>
+                </>
+              ) : (
+                <>
+                  <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_1', 'Pertahankan diet seimbang dan gaya hidup aktif.')}</li>
+                  <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_2', 'Minum air putih yang cukup setiap hari.')}</li>
+                  <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_3', 'Lakukan general check-up tahunan secara rutin.')}</li>
+                </>
+              )}
+            </ul>
+          </div>
+
+          {criticalFactors.length > 0 && (
+            <div className="border border-red-100 p-5 rounded-md break-inside-avoid">
+              <h3 className="text-xs font-bold text-red-700 mb-3 uppercase tracking-wider">Critical Parameters Input</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {criticalFactors.slice(0, 4).map((factor, idx) => (
+                  <div key={idx} className="bg-red-50/50 p-3 rounded border border-red-100 text-center">
+                    <p className="text-[10px] text-gray-500 font-medium uppercase mb-1">{factor.name}</p>
+                    <p className="text-sm font-bold text-red-700">{factor.val}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {result.shap_values && result.shap_values.length > 0 && (
+            <div className="border border-gray-100 p-5 rounded-md mt-6 break-inside-avoid">
+              <h3 className="text-xs font-bold text-gray-700 mb-4 uppercase tracking-wider">{t('risk_factors')} (AI Insights)</h3>
+              <div className="h-[320px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart 
+                    data={result.shap_values.map(item => ({...item, feature: item.feature.replace(/_/g, ' ')}))} 
+                    layout="vertical" 
+                    margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
+                  >
+                    <XAxis type="number" hide />
+                    <YAxis dataKey="feature" type="category" width={140} tick={{ fontSize: 11, fill: '#4b5563', fontWeight: 500 }} axisLine={false} tickLine={false} />
+                    <Tooltip content={<CustomShapTooltip />} cursor={{fill: '#f5f5f4'}} />
+                    <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                      {result.shap_values.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.value > 0 ? '#ef4444' : '#10b981'} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <p className="text-[10px] text-gray-400 mt-2 text-center">Arahkan kursor ke grafik untuk melihat insight detail pengaruh masing-masing faktor.</p>
+            </div>
+          )}
+        </div>
       </div>
       <button 
         onClick={handleDownloadPdf}
         className="print-hide w-full font-bold py-3 px-4 rounded-md transition-colors border flex items-center justify-center space-x-2 bg-stone-100 hover:bg-stone-200 text-gray-700 border-stone-200"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-        <span>{t('btn_download_pdf')}</span>
+        <span>Download Clinical Report (PDF)</span>
       </button>
     </div>
   );

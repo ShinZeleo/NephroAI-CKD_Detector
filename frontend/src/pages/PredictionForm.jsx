@@ -192,6 +192,25 @@ const PredictionForm = () => {
     return { label: "Normal", color: "text-green-600", bg: "bg-green-50 border-green-200" };
   };
 
+  const getWarnings = () => {
+    const warnings = [];
+    if (formData.Serum_Creatinine && parseFloat(formData.Serum_Creatinine) > 5.0) {
+      warnings.push("⚠ Nilai Serum Creatinine sangat tinggi dibanding rentang normal.");
+    }
+    if (formData.Potassium && parseFloat(formData.Potassium) > 6.0) {
+      warnings.push("⚠ Nilai Kalium (Potassium) sangat tinggi dibanding rentang normal.");
+    }
+    if (formData.Blood_Glucose_Random && parseFloat(formData.Blood_Glucose_Random) > 300) {
+      warnings.push("⚠ Nilai Gula Darah sangat tinggi dibanding rentang normal.");
+    }
+    if (formData.Systolic && parseFloat(formData.Systolic) > 180) {
+      warnings.push("⚠ Nilai Tekanan Darah Systolic sangat tinggi (Krisis Hipertensi).");
+    }
+    return warnings;
+  };
+
+  const warnings = getWarnings();
+
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="mb-10 mt-6 max-w-2xl print-hide">
@@ -293,7 +312,27 @@ const PredictionForm = () => {
                 </div>
               </div>
 
-              <div className="mt-10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+              {warnings.length > 0 && (
+                <div className="mt-8 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-md">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-sm font-bold text-yellow-800">Perhatian: Input Abnormal</h3>
+                      <div className="mt-2 text-sm text-yellow-700">
+                        <ul className="list-disc pl-5 space-y-1">
+                          {warnings.map((w, idx) => <li key={idx}>{w}</li>)}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-6 pt-6 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
                 <button 
                   type="button" 
                   onClick={handleFillNormal}
@@ -328,12 +367,34 @@ const PredictionForm = () => {
           )}
 
           {!result && !error && (
-            <div className="bg-white rounded-2xl p-8 flex flex-col items-center justify-center text-center h-[300px] border border-gray-100 clinical-shadow">
-              <div className="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center mb-4">
-                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            <div className="bg-white rounded-2xl p-8 flex flex-col items-center justify-center text-center border border-gray-100 clinical-shadow h-auto md:min-h-[400px]">
+              <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-5">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
               </div>
-              <h3 className="text-gray-800 font-serif font-bold mb-1">{t('form_waiting')}</h3>
-              <p className="text-sm text-gray-500">{t('form_waiting_desc')}</p>
+              <h3 className="text-gray-800 font-serif font-bold text-xl mb-2">{t('form_waiting')}</h3>
+              <p className="text-sm text-gray-500 mb-8 max-w-[250px] mx-auto">{t('form_waiting_desc')}</p>
+              
+              <div className="w-full text-left bg-stone-50 border border-stone-200 rounded-lg p-5">
+                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 border-b border-gray-200 pb-2">Model Specifications</h4>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Model:</span>
+                    <span className="text-sm font-bold text-gray-800">Random Forest</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Accuracy:</span>
+                    <span className="text-sm font-bold text-teal-600">99.0%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Recall:</span>
+                    <span className="text-sm font-bold text-teal-600">100.0%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Dataset:</span>
+                    <span className="text-sm font-bold text-gray-800">UCI CKD</span>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 

@@ -160,8 +160,9 @@ async def predict_batch(file: UploadFile = File(...)):
             
         summary = {
             "total": len(results),
-            "high_risk": sum(1 for r in results if r["is_ckd"]),
-            "low_risk": sum(1 for r in results if not r["is_ckd"])
+            "high_risk": sum(1 for r in results if r["probability"] > 0.6),
+            "medium_risk": sum(1 for r in results if 0.3 <= r["probability"] <= 0.6),
+            "low_risk": sum(1 for r in results if r["probability"] < 0.3)
         }
             
         return {
