@@ -280,9 +280,9 @@ const PredictionForm = ({ setActivePage }) => {
         </p>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col gap-10">
         {/* Form Section */}
-        <div className="lg:w-2/3 print-hide">
+        <div className="w-full max-w-4xl mx-auto print-hide">
           <div className="bg-white rounded-2xl p-6 md:p-8 clinical-shadow border border-gray-100">
             
             <div className="flex space-x-6 border-b border-gray-200 mb-8 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -430,7 +430,7 @@ const PredictionForm = ({ setActivePage }) => {
         </div>
 
         {/* Result Section */}
-        <div className="lg:w-1/3 print-w-full">
+        <div className="w-full max-w-4xl mx-auto print-w-full">
           {error && (
             <div className="bg-red-50 border border-red-200 p-4 rounded-lg mb-6">
               <p className="text-sm text-red-700 font-bold">Koneksi Gagal</p>

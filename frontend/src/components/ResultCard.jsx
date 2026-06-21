@@ -145,7 +145,7 @@ const ResultCard = ({ result, formData, setActivePage }) => {
           <span className="text-xs text-gray-400 font-mono">ID: #{Math.floor(Math.random() * 90000) + 10000}</span>
         </div>
 
-        <div className="flex flex-col items-center w-full gap-6 mb-8 border-b border-gray-50 pb-8 text-center">
+        <div className="flex flex-col md:flex-row items-center md:items-start w-full gap-8 mb-8 border-b border-gray-50 pb-8">
           <div className="relative w-36 h-36 flex-shrink-0">
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 140 140">
               <circle cx="70" cy="70" r={radius} fill="transparent" stroke="#f5f5f4" strokeWidth="8" />
@@ -159,15 +159,15 @@ const ResultCard = ({ result, formData, setActivePage }) => {
             </div>
           </div>
           
-          <div className="w-full text-center mt-2">
-            <h2 className={`text-3xl font-serif font-bold mb-1 ${strokeColor === '#dc2626' ? 'text-red-700' : (strokeColor === '#f97316' ? 'text-orange-600' : 'text-teal-700')}`}>
+          <div className="flex-1 w-full text-center md:text-left mt-4 md:mt-0">
+            <h2 className={`text-3xl font-serif font-bold mb-2 ${strokeColor === '#dc2626' ? 'text-red-700' : (strokeColor === '#f97316' ? 'text-orange-600' : 'text-teal-700')}`}>
               Risiko CKD {riskCategory}
             </h2>
             <p className="text-gray-600 text-sm font-medium mb-4">
               Prediksi Saat Ini: <span className="font-bold">{isCKD ? 'Terindikasi CKD' : 'Tidak Terindikasi CKD'}</span>
             </p>
             
-            <div className="flex flex-wrap gap-2 justify-center mb-5 print-hide">
+            <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-5 print-hide">
                <span className="px-2.5 py-1 bg-stone-100 text-stone-600 text-xs rounded-md font-medium border border-stone-200">
                  Confidence: <strong className="text-stone-800">{confidenceStr}</strong>
                </span>
@@ -176,9 +176,9 @@ const ResultCard = ({ result, formData, setActivePage }) => {
                </span>
             </div>
 
-            <div className="bg-blue-50/50 border border-blue-100 p-4 rounded-md text-left">
-              <h3 className="text-xs font-bold text-blue-800 mb-1.5 uppercase tracking-wider text-center">Ringkasan Klinis</h3>
-              <p className="text-sm text-blue-900 leading-relaxed text-center">
+            <div className="bg-blue-50/50 border border-blue-100 p-4 rounded-md text-left max-w-2xl">
+              <h3 className="text-xs font-bold text-blue-800 mb-1.5 uppercase tracking-wider">Ringkasan Klinis</h3>
+              <p className="text-sm text-blue-900 leading-relaxed">
                 Pasien berusia {formData?.Age || '-'} tahun dengan kondisi <strong>{egfrCategory.toLowerCase()}</strong> {result.egfr ? `(eGFR: ${result.egfr.toFixed(1)})` : ''}. 
                 Berdasarkan analisis parameter klinis secara keseluruhan, risiko terjadinya Chronic Kidney Disease (CKD) saat ini tergolong <strong>{riskCategory.toLowerCase()}</strong>.
               </p>
@@ -186,7 +186,7 @@ const ResultCard = ({ result, formData, setActivePage }) => {
           </div>
         </div>
 
-        <div className="w-full flex flex-col gap-5 mb-8">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
           {/* eGFR Card */}
           <div className="bg-stone-50 border border-stone-200 p-5 rounded-lg flex flex-col justify-center">
             <h3 className="text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">eGFR Estimation</h3>
@@ -209,44 +209,46 @@ const ResultCard = ({ result, formData, setActivePage }) => {
           </div>
         </div>
 
-        <div className="w-full space-y-6">
-          <div className="bg-stone-50 p-5 rounded-md border border-stone-100">
-            <h3 className="text-sm font-bold text-primary mb-3 uppercase tracking-wider">Recommendations</h3>
-            <ul className="space-y-3 text-sm text-gray-600 leading-relaxed">
-              {isCKD ? (
-                <>
-                  <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_1', 'Rujuk ke Dokter Spesialis Penyakit Dalam Konsultan Ginjal Hipertensi (Sp.PD-KGH) segera.')}</li>
-                  <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_2', 'Lakukan tes lab lengkap (Ureum, Kreatinin, Urinalisis).')}</li>
-                  <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_3', 'Pantau ketat tekanan darah harian pasien.')}</li>
-                </>
-              ) : (
-                <>
-                  <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_1', 'Pertahankan diet seimbang dan gaya hidup aktif.')}</li>
-                  <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_2', 'Minum air putih yang cukup setiap hari.')}</li>
-                  <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_3', 'Lakukan general check-up tahunan secara rutin.')}</li>
-                </>
-              )}
-            </ul>
-          </div>
-
-          {criticalFactors.length > 0 && (
-            <div className="border border-red-100 p-5 rounded-md break-inside-avoid">
-              <h3 className="text-xs font-bold text-red-700 mb-3 uppercase tracking-wider">Critical Parameters Input</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {criticalFactors.slice(0, 4).map((factor, idx) => (
-                  <div key={idx} className="bg-red-50/50 p-3 rounded border border-red-100 text-center">
-                    <p className="text-[10px] text-gray-500 font-medium uppercase mb-1">{factor.name}</p>
-                    <p className="text-sm font-bold text-red-700">{factor.val}</p>
-                  </div>
-                ))}
-              </div>
+        <div className={`w-full grid grid-cols-1 ${result.shap_values && result.shap_values.length > 0 ? 'lg:grid-cols-2' : ''} gap-8 mb-8`}>
+          <div className="space-y-6">
+            <div className="bg-stone-50 p-5 rounded-md border border-stone-100 h-full">
+              <h3 className="text-sm font-bold text-primary mb-3 uppercase tracking-wider">Recommendations</h3>
+              <ul className="space-y-3 text-sm text-gray-600 leading-relaxed">
+                {isCKD ? (
+                  <>
+                    <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_1', 'Rujuk ke Dokter Spesialis Penyakit Dalam Konsultan Ginjal Hipertensi (Sp.PD-KGH) segera.')}</li>
+                    <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_2', 'Lakukan tes lab lengkap (Ureum, Kreatinin, Urinalisis).')}</li>
+                    <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_3', 'Pantau ketat tekanan darah harian pasien.')}</li>
+                  </>
+                ) : (
+                  <>
+                    <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_1', 'Pertahankan diet seimbang dan gaya hidup aktif.')}</li>
+                    <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_2', 'Minum air putih yang cukup setiap hari.')}</li>
+                    <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_3', 'Lakukan general check-up tahunan secara rutin.')}</li>
+                  </>
+                )}
+              </ul>
             </div>
-          )}
+
+            {criticalFactors.length > 0 && (
+              <div className="border border-red-100 p-5 rounded-md break-inside-avoid">
+                <h3 className="text-xs font-bold text-red-700 mb-3 uppercase tracking-wider">Critical Parameters Input</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {criticalFactors.slice(0, 4).map((factor, idx) => (
+                    <div key={idx} className="bg-red-50/50 p-3 rounded border border-red-100 text-center">
+                      <p className="text-[10px] text-gray-500 font-medium uppercase mb-1">{factor.name}</p>
+                      <p className="text-sm font-bold text-red-700">{factor.val}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
           
           {result.shap_values && result.shap_values.length > 0 && (
-            <div className="border border-gray-100 p-5 rounded-md mt-6 break-inside-avoid">
+            <div className="border border-gray-100 p-5 rounded-md break-inside-avoid h-full flex flex-col">
               <h3 className="text-xs font-bold text-gray-700 mb-4 uppercase tracking-wider">{t('risk_factors')} (AI Insights)</h3>
-              <div className="h-[320px] w-full">
+              <div className="flex-1 min-h-[280px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
                     data={result.shap_values.map(item => ({...item, featureName: shapFeatureMapping[item.feature] || item.feature.replace(/_/g, ' ')}))} 
@@ -254,7 +256,7 @@ const ResultCard = ({ result, formData, setActivePage }) => {
                     margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
                   >
                     <XAxis type="number" hide />
-                    <YAxis dataKey="featureName" type="category" width={180} tick={{ fontSize: 10, fill: '#4b5563', fontWeight: 500 }} axisLine={false} tickLine={false} />
+                    <YAxis dataKey="featureName" type="category" width={140} tick={{ fontSize: 10, fill: '#4b5563', fontWeight: 500 }} axisLine={false} tickLine={false} />
                     <Tooltip content={<CustomShapTooltip />} cursor={{fill: '#f5f5f4'}} />
                     <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                       {result.shap_values.map((entry, index) => (
@@ -264,9 +266,9 @@ const ResultCard = ({ result, formData, setActivePage }) => {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <p className="text-[10px] text-gray-400 mt-2 text-center print-hide">Arahkan kursor ke grafik untuk melihat insight detail pengaruh masing-masing faktor.</p>
+              <p className="text-[10px] text-gray-400 mt-2 mb-4 text-center print-hide">Arahkan kursor ke grafik untuk melihat insight detail.</p>
               
-              <div className="border-t border-gray-100 mt-5 pt-2">
+              <div className="border-t border-gray-100 pt-4">
                 {getShapNarrative(result.shap_values)}
               </div>
             </div>
