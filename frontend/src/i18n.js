@@ -353,6 +353,7 @@ const resources = {
       "shap_tooltip_inc": "increase",
       "shap_tooltip_dec": "decrease",
       "shap_tooltip_insight": "The current {{feat}} value contributes to {{impact}} the CKD risk."
+    }
   }
 };
 
