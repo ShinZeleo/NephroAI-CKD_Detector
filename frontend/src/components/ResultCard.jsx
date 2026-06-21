@@ -207,34 +207,58 @@ const ResultCard = ({ result, formData, setActivePage }) => {
           </div>
         </div>
 
-        <div className="w-full space-y-6">
-          <div className="bg-stone-50 p-5 rounded-md border border-stone-100">
-            <h3 className="text-sm font-bold text-primary mb-3 uppercase tracking-wider">Recommendations</h3>
-            <ul className="space-y-3 text-sm text-gray-600 leading-relaxed">
+        <div className="w-full space-y-5">
+          <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+            <h3 className="text-xs font-bold text-gray-800 mb-4 uppercase tracking-wider flex items-center">
+              <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+              Recommendations
+            </h3>
+            <ul className="space-y-3.5 text-[13px] text-gray-600 leading-relaxed">
               {isCKD ? (
                 <>
-                  <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_1', 'Rujuk ke Dokter Spesialis Penyakit Dalam Konsultan Ginjal Hipertensi (Sp.PD-KGH) segera.')}</li>
-                  <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_2', 'Lakukan tes lab lengkap (Ureum, Kreatinin, Urinalisis).')}</li>
-                  <li className="flex items-start"><span className="text-red-600 mr-2 font-bold">›</span> {t('rec_ckd_3', 'Pantau ketat tekanan darah harian pasien.')}</li>
+                  <li className="flex items-start">
+                    <svg className="w-4 h-4 text-red-500 mr-2.5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <span>{t('rec_ckd_1', 'Rujuk ke Dokter Spesialis Penyakit Dalam Konsultan Ginjal Hipertensi (Sp.PD-KGH) segera.')}</span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="w-4 h-4 text-red-500 mr-2.5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <span>{t('rec_ckd_2', 'Lakukan tes lab lengkap (Ureum, Kreatinin, Urinalisis).')}</span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="w-4 h-4 text-red-500 mr-2.5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <span>{t('rec_ckd_3', 'Pantau ketat tekanan darah harian pasien.')}</span>
+                  </li>
                 </>
               ) : (
                 <>
-                  <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_1', 'Pertahankan diet seimbang dan gaya hidup aktif.')}</li>
-                  <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_2', 'Minum air putih yang cukup setiap hari.')}</li>
-                  <li className="flex items-start"><span className="text-teal-600 mr-2 font-bold">›</span> {t('rec_nockd_3', 'Lakukan general check-up tahunan secara rutin.')}</li>
+                  <li className="flex items-start">
+                    <svg className="w-4 h-4 text-teal-500 mr-2.5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>{t('rec_nockd_1', 'Pertahankan diet seimbang dan gaya hidup aktif.')}</span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="w-4 h-4 text-teal-500 mr-2.5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>{t('rec_nockd_2', 'Minum air putih yang cukup setiap hari.')}</span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="w-4 h-4 text-teal-500 mr-2.5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>{t('rec_nockd_3', 'Lakukan general check-up tahunan secara rutin.')}</span>
+                  </li>
                 </>
               )}
             </ul>
           </div>
 
           {criticalFactors.length > 0 && (
-            <div className="border border-red-100 p-5 rounded-md break-inside-avoid">
-              <h3 className="text-xs font-bold text-red-700 mb-3 uppercase tracking-wider">Critical Parameters Input</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-red-50/40 border border-red-100 p-4 rounded-xl break-inside-avoid">
+              <h3 className="text-[10px] font-bold text-red-700 mb-3 uppercase tracking-wider flex items-center">
+                <svg className="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                Critical Parameters Input
+              </h3>
+              <div className="grid grid-cols-2 gap-2.5">
                 {criticalFactors.slice(0, 4).map((factor, idx) => (
-                  <div key={idx} className="bg-red-50/50 p-3 rounded border border-red-100 text-center">
-                    <p className="text-[10px] text-gray-500 font-medium uppercase mb-1">{factor.name}</p>
-                    <p className="text-sm font-bold text-red-700">{factor.val}</p>
+                  <div key={idx} className="bg-white p-2.5 rounded-lg border border-red-100/50 shadow-[0_1px_2px_rgba(0,0,0,0.03)] text-center flex flex-col justify-center">
+                    <p className="text-[9px] text-gray-500 font-bold uppercase mb-0.5 truncate px-1">{factor.name}</p>
+                    <p className="text-sm font-black text-red-600">{factor.val}</p>
                   </div>
                 ))}
               </div>
@@ -242,32 +266,45 @@ const ResultCard = ({ result, formData, setActivePage }) => {
           )}
           
           {result.shap_values && result.shap_values.length > 0 && (
-            <div className="border border-gray-100 p-5 rounded-md mt-6 break-inside-avoid">
-              <h3 className="text-xs font-bold text-gray-700 mb-4 uppercase tracking-wider">{t('risk_factors')} (AI Insights)</h3>
-              <div className="h-[260px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart 
-                    data={result.shap_values.map(item => ({...item, featureName: shapFeatureMapping[item.feature] || item.feature.replace(/_/g, ' ')}))} 
-                    layout="vertical" 
-                    margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
-                  >
-                    <XAxis type="number" hide />
-                    <YAxis dataKey="featureName" type="category" width={180} tick={{ fontSize: 10, fill: '#4b5563', fontWeight: 500 }} axisLine={false} tickLine={false} />
-                    <Tooltip content={<CustomShapTooltip />} cursor={{fill: '#f5f5f4'}} />
-                    <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                      {result.shap_values.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.value > 0 ? '#ef4444' : '#10b981'} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+          {result.shap_values && result.shap_values.length > 0 && (
+            <div className="bg-white border border-gray-100 shadow-sm p-4 rounded-xl mt-5 break-inside-avoid overflow-hidden">
+              <div className="flex items-center mb-4 border-b border-gray-50 pb-3">
+                <svg className="w-4 h-4 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                <h3 className="text-[11px] font-bold text-gray-800 uppercase tracking-wider">{t('risk_factors')} (AI Insights)</h3>
               </div>
-              <p className="text-[10px] text-gray-400 mt-2 text-center print-hide">Arahkan kursor ke grafik untuk melihat insight detail pengaruh masing-masing faktor.</p>
               
-              <div className="border-t border-gray-100 mt-5 pt-2">
-                {getShapNarrative(result.shap_values)}
+              <div className="bg-slate-50/70 rounded-lg p-2 mb-4 border border-slate-100">
+                <div className="h-[220px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart 
+                      data={result.shap_values.map(item => ({...item, featureName: shapFeatureMapping[item.feature] || item.feature.replace(/_/g, ' ')}))} 
+                      layout="vertical" 
+                      margin={{ top: 0, right: 10, left: 0, bottom: 0 }}
+                    >
+                      <XAxis type="number" hide />
+                      <YAxis dataKey="featureName" type="category" width={110} tick={{ fontSize: 9, fill: '#64748b', fontWeight: 600 }} axisLine={false} tickLine={false} />
+                      <Tooltip content={<CustomShapTooltip />} cursor={{fill: '#f1f5f9'}} />
+                      <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={16}>
+                        {result.shap_values.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.value > 0 ? '#ef4444' : '#10b981'} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <p className="text-[9px] text-slate-400 mt-1 text-center print-hide italic">Arahkan kursor ke grafik untuk detail pengaruh</p>
+              </div>
+              
+              <div className="bg-indigo-50/60 p-3.5 rounded-lg border border-indigo-100/50">
+                <div className="flex items-start">
+                  <svg className="w-4 h-4 text-indigo-500 mr-2.5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  <div className="text-[11.5px] text-indigo-900/80 leading-relaxed font-medium">
+                    {getShapNarrative(result.shap_values)}
+                  </div>
+                </div>
               </div>
             </div>
+          )}
           )}
         </div>
       </div>
