@@ -11,15 +11,14 @@ const ResultCard = ({ result, formData, setActivePage }) => {
 
   const isCKD = result.is_ckd;
   const probabilityPercent = result.probability * 100;
-  const confidenceStr = (probabilityPercent > 80 || probabilityPercent < 15) ? "Tinggi" : (probabilityPercent > 60 || probabilityPercent < 25 ? "Sedang" : "Rendah");
+  const rawRiskCategory = probabilityPercent > 60 ? 'Tinggi' : (probabilityPercent >= 30 ? 'Sedang' : 'Rendah');
+  const confidenceStr = (probabilityPercent > 80 || probabilityPercent < 15) ? t('risk_category_high') : (probabilityPercent > 60 || probabilityPercent < 25 ? t('risk_category_med') : t('risk_category_low'));
   
-  let riskCategory = "Rendah";
-  if (probabilityPercent > 60) riskCategory = "Tinggi";
-  else if (probabilityPercent >= 30) riskCategory = "Sedang";
+  let riskCategory = rawRiskCategory === 'Tinggi' ? t('risk_category_high') : (rawRiskCategory === 'Sedang' ? t('risk_category_med') : t('risk_category_low'));
 
-  const colorClass = riskCategory === 'Tinggi' ? 'text-red-500' : (riskCategory === 'Sedang' ? 'text-orange-500' : 'text-green-500');
-  const bgClass = riskCategory === 'Tinggi' ? 'bg-red-50' : (riskCategory === 'Sedang' ? 'bg-orange-50' : 'bg-green-50');
-  const strokeColor = riskCategory === 'Tinggi' ? '#dc2626' : (riskCategory === 'Sedang' ? '#f97316' : '#0d9488'); 
+  const colorClass = rawRiskCategory === 'Tinggi' ? 'text-red-500' : (rawRiskCategory === 'Sedang' ? 'text-orange-500' : 'text-green-500');
+  const bgClass = rawRiskCategory === 'Tinggi' ? 'bg-red-50' : (rawRiskCategory === 'Sedang' ? 'bg-orange-50' : 'bg-green-50');
+  const strokeColor = rawRiskCategory === 'Tinggi' ? '#dc2626' : (rawRiskCategory === 'Sedang' ? '#f97316' : '#0d9488'); 
 
   const handleDownloadPdf = () => {
     window.print();
@@ -30,23 +29,23 @@ const ResultCard = ({ result, formData, setActivePage }) => {
   const strokeDashoffset = circumference - (result.probability * circumference);
 
   // eGFR Category
-  let egfrCategory = "Normal Kidney Function";
+  let egfrCategory = t('egfr_cat_normal');
   let egfrColor = "text-green-600";
   if (result.egfr) {
-    if (result.egfr >= 90) { egfrCategory = "Fungsi Ginjal Normal"; egfrColor = "text-green-600"; }
-    else if (result.egfr >= 60) { egfrCategory = "Penurunan Ringan"; egfrColor = "text-yellow-600"; }
-    else if (result.egfr >= 45) { egfrCategory = "Penurunan Ringan-Sedang"; egfrColor = "text-orange-500"; }
-    else if (result.egfr >= 30) { egfrCategory = "Penurunan Sedang-Berat"; egfrColor = "text-orange-600"; }
-    else if (result.egfr >= 15) { egfrCategory = "Penurunan Berat"; egfrColor = "text-red-500"; }
-    else { egfrCategory = "Gagal Ginjal"; egfrColor = "text-red-700"; }
+    if (result.egfr >= 90) { egfrCategory = t('egfr_cat_normal'); egfrColor = "text-green-600"; }
+    else if (result.egfr >= 60) { egfrCategory = t('egfr_cat_mild'); egfrColor = "text-yellow-600"; }
+    else if (result.egfr >= 45) { egfrCategory = t('egfr_cat_mild_mod'); egfrColor = "text-orange-500"; }
+    else if (result.egfr >= 30) { egfrCategory = t('egfr_cat_mod_sev'); egfrColor = "text-orange-600"; }
+    else if (result.egfr >= 15) { egfrCategory = t('egfr_cat_sev'); egfrColor = "text-red-500"; }
+    else { egfrCategory = t('egfr_cat_fail'); egfrColor = "text-red-700"; }
   }
 
   const criticalFactors = [];
   if (formData) {
-    if (parseFloat(formData.Systolic) >= 140 || parseFloat(formData.Blood_Pressure) >= 90) criticalFactors.push({ name: 'Tekanan Darah Tinggi', val: formData.Systolic ? `${formData.Systolic}/${formData.Blood_Pressure} mmHg` : `${formData.Blood_Pressure} mmHg` });
-    if (parseFloat(formData.Serum_Creatinine) > 1.2) criticalFactors.push({ name: 'Kreatinin Abnormal', val: `${formData.Serum_Creatinine} mg/dL` });
-    if (parseFloat(formData.Blood_Glucose_Random) > 200) criticalFactors.push({ name: 'Gula Darah Tinggi', val: `${formData.Blood_Glucose_Random} mg/dL` });
-    if (parseFloat(formData.Hemoglobin) < 12) criticalFactors.push({ name: 'Indikasi Anemia', val: `${formData.Hemoglobin} g/dL` });
+    if (parseFloat(formData.Systolic) >= 140 || parseFloat(formData.Blood_Pressure) >= 90) criticalFactors.push({ name: t('crit_bp'), val: formData.Systolic ? `${formData.Systolic}/${formData.Blood_Pressure} mmHg` : `${formData.Blood_Pressure} mmHg` });
+    if (parseFloat(formData.Serum_Creatinine) > 1.2) criticalFactors.push({ name: t('crit_cr'), val: `${formData.Serum_Creatinine} mg/dL` });
+    if (parseFloat(formData.Blood_Glucose_Random) > 200) criticalFactors.push({ name: t('crit_bg'), val: `${formData.Blood_Glucose_Random} mg/dL` });
+    if (parseFloat(formData.Hemoglobin) < 12) criticalFactors.push({ name: t('crit_ane'), val: `${formData.Hemoglobin} g/dL` });
   }
 
   const shapFeatureMapping = {
@@ -78,42 +77,19 @@ const ResultCard = ({ result, formData, setActivePage }) => {
 
   const getShapNarrative = (shap_values) => {
     if (!shap_values || shap_values.length === 0) return null;
-    const sorted = [...shap_values].sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
-    const topFactors = sorted.slice(0, 4);
-
-    return (
-      <div className="mt-6 mb-2">
-        <h4 className="text-sm font-bold text-gray-800 mb-2">Mengapa Risiko Anda {riskCategory}?</h4>
-        <ul className="space-y-3 mt-3 text-sm text-gray-700">
-          {topFactors.map((factor, idx) => {
-            const aliasName = shapFeatureMapping[factor.feature] || factor.feature.replace(/_/g, ' ');
-            if (factor.value > 0) {
-               return (
-                 <li key={idx} className="flex items-start">
-                   <span className="text-red-500 mr-2 mt-0.5">↑</span> 
-                   <span><strong>{aliasName}</strong> berkontribusi meningkatkan risiko Anda.</span>
-                 </li>
-               );
-            } else {
-               return (
-                 <li key={idx} className="flex items-start">
-                   <span className="text-green-500 mr-2 mt-0.5">↓</span> 
-                   <span><strong>{aliasName}</strong> berkontribusi menurunkan (menjaga) risiko Anda.</span>
-                 </li>
-               );
-            }
-          })}
-        </ul>
-        {setActivePage && (
-          <button 
-            onClick={() => setActivePage('education')}
-            className="mt-5 btn-print-hide text-xs font-bold bg-blue-50 text-blue-700 py-2 px-4 rounded hover:bg-blue-100 transition-colors inline-flex items-center"
-          >
-            Pelajari Lebih Lanjut di Education Center <span className="ml-1">→</span>
-          </button>
-        )}
-      </div>
-    );
+    const topFactor = [...shap_values].sort((a, b) => Math.abs(b.value) - Math.abs(a.value))[0];
+    const val = topFactor.value;
+    const featName = shapFeatureMapping[topFactor.feature] || topFactor.feature.replace(/_/g, ' ');
+    
+    if (val > 0) {
+      return (
+        <span dangerouslySetInnerHTML={{ __html: t('shap_narrative_high', { featName }).replace('<1>', '<strong>').replace('</1>', '</strong>').replace('<3>', '<strong>').replace('</3>', '</strong>') }} />
+      );
+    } else {
+      return (
+        <span dangerouslySetInnerHTML={{ __html: t('shap_narrative_low', { featName }).replace('<1>', '<strong>').replace('</1>', '</strong>').replace('<3>', '<strong>').replace('</3>', '</strong>') }} />
+      );
+    }
   };
 
   const CustomShapTooltip = ({ active, payload }) => {
@@ -121,8 +97,8 @@ const ResultCard = ({ result, formData, setActivePage }) => {
       const data = payload[0].payload;
       const val = data.value;
       const feat = data.feature;
-      const impact = val > 0 ? "meningkatkan" : "menurunkan";
-      const insight = `Nilai ${feat} pasien saat ini berkontribusi ${impact} risiko CKD.`;
+      const impact = val > 0 ? t('shap_tooltip_inc') : t('shap_tooltip_dec');
+      const insight = t('shap_tooltip_insight', { feat: shapFeatureMapping[feat] || feat.replace(/_/g, ' '), impact });
       
       return (
         <div className="bg-white p-3 border border-gray-200 shadow-lg rounded-md max-w-xs z-50">
@@ -139,10 +115,10 @@ const ResultCard = ({ result, formData, setActivePage }) => {
 
   return (
     <div className={`flex flex-col gap-4 relative transition-all duration-700 ease-in-out ${isExpanded ? '' : 'max-h-[780px] overflow-hidden'} rounded-2xl`}>
-      <div id="printable-report" className={`mt-0 bg-white border border-gray-200 clinical-shadow rounded-xl p-6 md:p-8 ${riskCategory === 'Tinggi' ? 'border-t-4 border-t-red-600' : (riskCategory === 'Sedang' ? 'border-t-4 border-t-orange-500' : 'border-t-4 border-t-teal-600')}`}>
+      <div id="printable-report" className={`mt-0 bg-white border border-gray-200 clinical-shadow rounded-xl p-6 md:p-8 ${rawRiskCategory === 'Tinggi' ? 'border-t-4 border-t-red-600' : (rawRiskCategory === 'Sedang' ? 'border-t-4 border-t-orange-500' : 'border-t-4 border-t-teal-600')}`}>
         
         <div className="border-b border-gray-100 pb-4 mb-6 flex justify-between items-center">
-          <h2 className="font-serif font-bold text-lg text-primary tracking-wide uppercase">Clinical Report</h2>
+          <h2 className="font-serif font-bold text-lg text-primary tracking-wide uppercase">{t('report_title')}</h2>
           <span className="text-xs text-gray-400 font-mono">ID: #{Math.floor(Math.random() * 90000) + 10000}</span>
         </div>
         <div className="flex flex-col md:flex-row items-center md:items-start w-full gap-5 mb-8 border-b border-gray-50 pb-8">
@@ -161,10 +137,10 @@ const ResultCard = ({ result, formData, setActivePage }) => {
           
           <div className="flex-1 w-full text-center md:text-left">
             <h2 className={`text-2xl font-serif font-bold mb-1.5 ${strokeColor === '#dc2626' ? 'text-red-700' : (strokeColor === '#f97316' ? 'text-orange-600' : 'text-teal-700')}`}>
-              Risiko CKD {riskCategory}
+              {t('risk_ckd_prefix')} {riskCategory}
             </h2>
             <p className="text-gray-600 text-[13px] font-medium mb-3">
-              Prediksi Saat Ini: <span className="font-bold">{isCKD ? 'Terindikasi CKD' : 'Tidak Terindikasi CKD'}</span>
+              {t('current_pred')} <span className="font-bold">{isCKD ? t('ind_ckd_strong') : t('ind_ckd_no')}</span>
             </p>
             <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-4 print-hide">
                <span className="px-2 py-1 bg-stone-100 text-stone-600 text-[11px] rounded font-medium border border-stone-200">
@@ -176,10 +152,8 @@ const ResultCard = ({ result, formData, setActivePage }) => {
             </div>
 
             <div className="bg-blue-50/60 border border-blue-100 p-3.5 rounded-lg text-left w-full">
-              <h3 className="text-[11px] font-bold text-blue-800 mb-1 uppercase tracking-wider">Ringkasan Klinis</h3>
-              <p className="text-[13px] text-blue-900/90 leading-relaxed">
-                Pasien usia {formData?.Age || '-'} thn dgn kondisi <strong>{egfrCategory.toLowerCase()}</strong> {result.egfr ? `(eGFR: ${result.egfr.toFixed(1)})` : ''}. Risiko saat ini tergolong <strong>{riskCategory.toLowerCase()}</strong>.
-              </p>
+              <h3 className="text-[11px] font-bold text-blue-800 mb-1 uppercase tracking-wider">{t('clin_summary')}</h3>
+              <p className="text-[13px] text-blue-900/90 leading-relaxed" dangerouslySetInnerHTML={{ __html: t('summary_text', { age: formData?.Age || '-', egfrCat: '<strong>' + egfrCategory.toLowerCase() + '</strong>', egfr: result.egfr ? result.egfr.toFixed(1) : '-', riskLevel: '<strong>' + riskCategory.toLowerCase() + '</strong>' }) }} />
             </div>
           </div>
         </div>
@@ -187,7 +161,7 @@ const ResultCard = ({ result, formData, setActivePage }) => {
         <div className="w-full grid grid-cols-2 gap-4 mb-8">
           {/* eGFR Card */}
           <div className="bg-stone-50 border border-stone-200 p-4 rounded-xl flex flex-col justify-center">
-            <h3 className="text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-wider">eGFR Est.</h3>
+            <h3 className="text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-wider">{t('egfr_label')}</h3>
             <div className="flex flex-col mb-2">
               <span className="text-3xl font-serif font-black text-gray-800 leading-none">{result.egfr ? result.egfr.toFixed(1) : 'N/A'}</span>
               <span className="text-[10px] font-medium text-gray-400 mt-1">mL/min/1.73m²</span>
@@ -197,13 +171,13 @@ const ResultCard = ({ result, formData, setActivePage }) => {
 
           {/* BUN/Cr Ratio Card */}
           <div className="bg-stone-50 border border-stone-200 p-4 rounded-xl flex flex-col justify-center">
-            <h3 className="text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-wider">BUN/Cr Ratio</h3>
+            <h3 className="text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-wider">{t('bun_cr_label')}</h3>
             <div className="flex flex-col mb-2">
               <span className="text-3xl font-serif font-black text-gray-800 leading-none">{result.bun_cr_ratio ? result.bun_cr_ratio.toFixed(1) : 'N/A'}</span>
               <span className="text-[10px] font-medium text-gray-400 mt-1">Ratio</span>
             </div>
             <p className="text-[11px] font-medium text-gray-500 leading-tight">
-              {result.bun_cr_ratio && result.bun_cr_ratio > 20 ? 'Risiko Dehidrasi / Pre-renal' : 'Rasio Normal'}
+              {result.bun_cr_ratio && result.bun_cr_ratio > 20 ? t('ratio_dehyd') : t('ratio_normal')}
             </p>
           </div>
         </div>
@@ -212,7 +186,7 @@ const ResultCard = ({ result, formData, setActivePage }) => {
           <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
             <h3 className="text-xs font-bold text-gray-800 mb-4 uppercase tracking-wider flex items-center">
               <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-              Recommendations
+              {t('recommendations_title')}
             </h3>
             <ul className="space-y-3.5 text-[13px] text-gray-600 leading-relaxed">
               {isCKD ? (
@@ -253,7 +227,7 @@ const ResultCard = ({ result, formData, setActivePage }) => {
             <div className="bg-red-50/40 border border-red-100 p-4 rounded-xl break-inside-avoid">
               <h3 className="text-[10px] font-bold text-red-700 mb-3 uppercase tracking-wider flex items-center">
                 <svg className="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                Critical Parameters Input
+                {t('critical_params_title')}
               </h3>
               <div className="grid grid-cols-2 gap-2.5">
                 {criticalFactors.slice(0, 4).map((factor, idx) => (
@@ -270,7 +244,7 @@ const ResultCard = ({ result, formData, setActivePage }) => {
             <div className="bg-white border border-gray-100 shadow-sm p-4 rounded-xl mt-5 break-inside-avoid overflow-hidden">
               <div className="flex items-center mb-4 border-b border-gray-50 pb-3">
                 <svg className="w-4 h-4 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
-                <h3 className="text-[11px] font-bold text-gray-800 uppercase tracking-wider">{t('risk_factors')} (AI Insights)</h3>
+                <h3 className="text-[11px] font-bold text-gray-800 uppercase tracking-wider">{t('shap_insights_title')}</h3>
               </div>
               
               <div className="bg-slate-50/70 rounded-lg p-2 mb-4 border border-slate-100">
@@ -292,7 +266,7 @@ const ResultCard = ({ result, formData, setActivePage }) => {
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-                <p className="text-[9px] text-slate-400 mt-1 text-center print-hide italic">Arahkan kursor ke grafik untuk detail pengaruh</p>
+                <p className="text-[9px] text-slate-400 mt-1 text-center print-hide italic">{t('hover_chart_hint')}</p>
               </div>
               
               <div className="bg-indigo-50/60 p-3.5 rounded-lg border border-indigo-100/50">
@@ -309,8 +283,8 @@ const ResultCard = ({ result, formData, setActivePage }) => {
       </div>
       
       <div className="mt-4 pt-4 border-t border-gray-200 text-center text-[10px] text-gray-400 max-w-sm mx-auto leading-relaxed">
-        Model Explainable AI ini dirancang sebagai alat bantu skrining awal. <br className="hidden md:block"/>
-        Hasil prediksi <strong>tidak menggantikan diagnosis medis dari dokter</strong> atau pemeriksaan klinis/laboratorium menyeluruh.
+        {t('disclaimer_text_1')} <br className="hidden md:block"/>
+        <span dangerouslySetInnerHTML={{ __html: t('disclaimer_text_2').replace('tidak menggantikan diagnosis medis dari dokter', '<strong>tidak menggantikan diagnosis medis dari dokter</strong>').replace('do not replace medical diagnosis from a doctor', '<strong>do not replace medical diagnosis from a doctor</strong>') }} />
       </div>
 
       <button 
@@ -327,7 +301,7 @@ const ResultCard = ({ result, formData, setActivePage }) => {
             onClick={() => setIsExpanded(true)}
             className="bg-primary text-white px-7 py-2.5 rounded-full font-bold shadow-[0_4px_14px_0_rgba(13,148,136,0.39)] hover:bg-teal-700 hover:shadow-[0_6px_20px_rgba(13,148,136,0.23)] hover:-translate-y-1 transition-all duration-300 flex items-center text-sm tracking-wide"
           >
-            <span>Lihat Analisis Lengkap</span>
+            <span>{t('btn_see_full')}</span>
             <svg className="w-4 h-4 ml-2 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
           </button>
         </div>
