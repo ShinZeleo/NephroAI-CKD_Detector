@@ -176,7 +176,8 @@ const resources = {
       "shap_narrative_low": "Berdasarkan analisis AI, faktor utama yang <1>paling menjaga pasien tetap di zona aman</1> adalah nilai <3>{{featName}}</3> yang sangat baik.",
       "shap_tooltip_inc": "meningkatkan",
       "shap_tooltip_dec": "menurunkan",
-      "shap_tooltip_insight": "Nilai {{feat}} pasien saat ini berkontribusi {{impact}} risiko CKD."
+      "shap_tooltip_insight": "Nilai {{feat}} pasien saat ini berkontribusi {{impact}} risiko CKD.",
+      "btn_collapse": "Tutup Analisis"
     }
   },
   en: {
@@ -352,7 +353,8 @@ const resources = {
       "shap_narrative_low": "Based on AI analysis, the main factor <1>keeping the patient in the safe zone</1> is the excellent <3>{{featName}}</3> value.",
       "shap_tooltip_inc": "increase",
       "shap_tooltip_dec": "decrease",
-      "shap_tooltip_insight": "The current {{feat}} value contributes to {{impact}} the CKD risk."
+      "shap_tooltip_insight": "The current {{feat}} value contributes to {{impact}} the CKD risk.",
+      "btn_collapse": "Collapse Analysis"
     }
   }
 };

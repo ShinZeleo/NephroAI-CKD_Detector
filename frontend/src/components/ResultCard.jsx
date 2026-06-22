@@ -119,7 +119,16 @@ const ResultCard = ({ result, formData, setActivePage }) => {
         
         <div className="border-b border-gray-100 pb-4 mb-6 flex justify-between items-center">
           <h2 className="font-serif font-bold text-lg text-primary tracking-wide uppercase">{t('report_title')}</h2>
-          <span className="text-xs text-gray-400 font-mono">ID: #{Math.floor(Math.random() * 90000) + 10000}</span>
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={handleDownloadPdf}
+              className="print-hide text-gray-400 hover:text-primary transition-colors flex items-center justify-center p-1.5 bg-gray-50 hover:bg-teal-50 rounded-md"
+              title="Download PDF"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            </button>
+            <span className="text-xs text-gray-400 font-mono">ID: #{Math.floor(Math.random() * 90000) + 10000}</span>
+          </div>
         </div>
         <div className="flex flex-col md:flex-row items-center md:items-start w-full gap-5 mb-8 border-b border-gray-50 pb-8">
           <div className="relative w-28 h-28 flex-shrink-0 mt-1">
@@ -282,24 +291,28 @@ const ResultCard = ({ result, formData, setActivePage }) => {
         </div>
       </div>
       
-      <div className="mt-4 pt-4 border-t border-gray-200 text-center text-[10px] text-gray-400 max-w-sm mx-auto leading-relaxed">
+      <div className="mt-4 pt-4 border-t border-gray-200 text-center text-[10px] text-gray-400 max-w-sm mx-auto leading-relaxed pb-4">
         {t('disclaimer_text_1')} <br className="hidden md:block"/>
         <span dangerouslySetInnerHTML={{ __html: t('disclaimer_text_2').replace('tidak menggantikan diagnosis medis dari dokter', '<strong>tidak menggantikan diagnosis medis dari dokter</strong>').replace('do not replace medical diagnosis from a doctor', '<strong>do not replace medical diagnosis from a doctor</strong>') }} />
       </div>
-
-      <button 
-        onClick={handleDownloadPdf}
-        className="print-hide w-full font-bold py-3 px-4 rounded-md transition-colors border flex items-center justify-center space-x-2 bg-stone-100 hover:bg-stone-200 text-gray-700 border-stone-200 mt-2"
-      >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-        <span>Download Clinical Report (PDF)</span>
-      </button>
+      
+      {isExpanded && (
+        <div className="mt-2 flex justify-center print-hide relative z-20 pb-4">
+          <button 
+            onClick={() => setIsExpanded(false)}
+            className="text-gray-400 hover:text-primary transition-colors flex flex-col items-center justify-center p-2 group"
+          >
+            <span className="text-[10px] font-bold uppercase tracking-wider mb-1 group-hover:text-primary transition-colors">{t('btn_collapse')}</span>
+            <svg className="w-5 h-5 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7"></path></svg>
+          </button>
+        </div>
+      )}
 
       {!isExpanded && (
-        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#fafaf9] via-[#fafaf9]/90 to-transparent flex items-end justify-center pb-6 z-10">
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#fafaf9] via-[#fafaf9]/90 to-transparent flex items-end justify-center pb-6 z-10 pointer-events-none">
           <button 
             onClick={() => setIsExpanded(true)}
-            className="bg-primary text-white px-7 py-2.5 rounded-full font-bold shadow-[0_4px_14px_0_rgba(13,148,136,0.39)] hover:bg-teal-700 hover:shadow-[0_6px_20px_rgba(13,148,136,0.23)] hover:-translate-y-1 transition-all duration-300 flex items-center text-sm tracking-wide"
+            className="bg-primary text-white px-7 py-2.5 rounded-full font-bold shadow-[0_4px_14px_0_rgba(13,148,136,0.39)] hover:bg-teal-700 hover:shadow-[0_6px_20px_rgba(13,148,136,0.23)] hover:-translate-y-1 transition-all duration-300 flex items-center text-sm tracking-wide pointer-events-auto"
           >
             <span>{t('btn_see_full')}</span>
             <svg className="w-4 h-4 ml-2 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>

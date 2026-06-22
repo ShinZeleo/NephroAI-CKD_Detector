@@ -310,10 +310,10 @@ const PredictionForm = ({ setActivePage }) => {
                       <label className="text-sm font-bold text-gray-800 leading-tight">
                         {t("lbl_bp")}
                         <span className="relative inline-block ml-1 group/tooltip align-middle">
-                          <span className="text-gray-400 hover:text-primary cursor-help text-xs leading-none">ⓘ</span>
-                          <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover/tooltip:block w-48 p-2 bg-gray-800 text-white text-[10px] font-normal rounded shadow-lg z-10 whitespace-normal text-left">
+                          <span className="text-gray-400 active:text-primary hover:text-primary cursor-help text-xs leading-none">ⓘ</span>
+                          <span className="absolute -left-2 sm:left-1/2 sm:-translate-x-1/2 bottom-full mb-2 hidden group-hover/tooltip:block active:block w-48 p-2.5 bg-gray-800 text-white text-[10px] font-normal rounded shadow-lg z-50 whitespace-normal text-left">
                             {t("tt_bp")}
-                            <svg className="absolute text-gray-800 h-2 w-full left-1/2 -translate-x-1/2 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
+                            <svg className="absolute text-gray-800 h-2 w-full left-4 sm:left-1/2 sm:-translate-x-1/2 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
                           </span>
                         </span>
                       </label>
