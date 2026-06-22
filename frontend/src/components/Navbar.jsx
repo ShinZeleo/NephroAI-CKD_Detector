@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Globe } from 'lucide-react';
+import { Globe, Menu, X } from 'lucide-react';
 
 const Navbar = ({ activePage, setActivePage }) => {
   const { t, i18n } = useTranslation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'id' ? 'en' : 'id';
@@ -38,6 +39,16 @@ const Navbar = ({ activePage, setActivePage }) => {
             <span className="ml-2 w-2 h-2 rounded-full bg-secondary"></span>
           </div>
 
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-gray-500 hover:text-primary focus:outline-none p-2"
+            >
+              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
+
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-8 h-full">
             {navItems.map((item) => (
@@ -69,31 +80,41 @@ const Navbar = ({ activePage, setActivePage }) => {
         </div>
       </div>
       
-      {/* Mobile Menu */}
-      <div className="md:hidden flex overflow-x-auto bg-white border-t border-gray-100 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => setActivePage(item.id)}
-            className={`whitespace-nowrap flex-1 flex justify-center items-center py-4 px-4 text-xs font-bold transition-all border-b-2 ${
-              activePage === item.id
-                ? 'text-primary border-primary bg-stone-50'
-                : 'text-gray-400 border-transparent hover:text-gray-700'
-            }`}
-          >
-            {item.icon}
-            {item.label}
-          </button>
-        ))}
-        {/* Mobile Language Toggle */}
-        <button
-          onClick={toggleLanguage}
-          className="whitespace-nowrap flex justify-center items-center py-4 px-4 text-xs font-bold transition-all border-b-2 text-gray-400 border-transparent hover:text-primary"
-        >
-          <Globe className="w-4 h-4 mr-1" />
-          {i18n.language === 'id' ? 'ID' : 'EN'}
-        </button>
-      </div>
+      {/* Mobile Menu Dropdown */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg">
+          <div className="px-3 pt-2 pb-4 space-y-1">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActivePage(item.id);
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center px-4 py-3.5 rounded-lg text-sm font-bold transition-all ${
+                  activePage === item.id
+                    ? 'text-teal-700 bg-teal-50'
+                    : 'text-gray-600 hover:text-primary hover:bg-stone-50'
+                }`}
+              >
+                {item.icon}
+                {item.label}
+              </button>
+            ))}
+            {/* Mobile Language Toggle */}
+            <button
+              onClick={() => {
+                toggleLanguage();
+                setIsMobileMenuOpen(false);
+              }}
+              className="w-full flex items-center px-4 py-3.5 rounded-lg text-sm font-bold text-gray-600 hover:text-primary hover:bg-stone-50 transition-all"
+            >
+              <Globe className="w-4 h-4 mr-2" />
+              {i18n.language === 'id' ? 'Switch to English' : 'Ganti ke Bahasa Indonesia'}
+            </button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
