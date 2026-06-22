@@ -158,7 +158,7 @@ const ResultCard = ({ result, formData, setActivePage }) => {
           </div>
         </div>
 
-        <div className="w-full grid grid-cols-2 gap-4 mb-8">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           {/* eGFR Card */}
           <div className="bg-stone-50 border border-stone-200 p-4 rounded-xl flex flex-col justify-center">
             <h3 className="text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-wider">{t('egfr_label')}</h3>
@@ -229,7 +229,7 @@ const ResultCard = ({ result, formData, setActivePage }) => {
                 <svg className="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                 {t('critical_params_title')}
               </h3>
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {criticalFactors.slice(0, 4).map((factor, idx) => (
                   <div key={idx} className="bg-white p-2.5 rounded-lg border border-red-100/50 shadow-[0_1px_2px_rgba(0,0,0,0.03)] text-center flex flex-col justify-center">
                     <p className="text-[9px] text-gray-500 font-bold uppercase mb-0.5 truncate px-1">{factor.name}</p>
